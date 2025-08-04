@@ -1,3 +1,15 @@
+buildscript{
+    val kotlin_version by extra("2.1.21")
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies{
+        classpath("com.google.gms:google-services:4.4.2")
+    }
+
+}
+
 allprojects {
     repositories {
         google()
