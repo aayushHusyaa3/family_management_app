@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "932617564074",
-    "project_id": "family-management-6a17b",
-    "storage_bucket": "family-management-6a17b.firebasestorage.app"
+    "project_number": "1058182962921",
+    "project_id": "home-ops-10cc3",
+    "storage_bucket": "home-ops-10cc3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:932617564074:android:cb0e1467f2c1887b77c5d3",
+        "mobilesdk_app_id": "1:1058182962921:android:0c0e20433e671070441a78",
         "android_client_info": {
           "package_name": "com.example.family_management_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDA53h8O8YHoRHkcyov5Y_Z-0BpHO59LHw"
+          "current_key": "AIzaSyBsEnOml7ctYgRNS_L6LMY5UWWa1IfasSE"
         }
       ],
       "services": {
