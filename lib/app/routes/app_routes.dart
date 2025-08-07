@@ -17,4 +17,6 @@ class AppRoutes {
   static const calendarScreen = '/Calendar';
   static const settingScreen = '/SettingsScreen';
   static const addTasksScreen = '/AddTasksScreens';
+  static const addEventsScreen = '/AddEventsScreen';
+  static const roleSelectionScreen = '/RoleSelectionScreen';
 }

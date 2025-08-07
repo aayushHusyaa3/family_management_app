@@ -19,16 +19,6 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String name,
     String? role,
   }) async {
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      emit(
-        state.copyWith(
-          status: RegisterStatus.emptyRegister,
-          errorMsg: "Enter the required Field",
-        ),
-      );
-      return;
-    }
-
     emit(
       state.copyWith(
         status: RegisterStatus.registering,
@@ -56,19 +46,20 @@ class RegisterCubit extends Cubit<RegisterState> {
 
       final savedRole = doc.data()?['role'] as String?;
       final savedEmail = doc.data()?['email'] as String?;
+      final savedName = doc.data()?['name'] as String?;
 
       await SecureStorage.save(key: "role", data: savedRole!);
       await SecureStorage.save(key: "email", data: savedEmail!);
+      await SecureStorage.save(key: "name", data: savedName!);
 
       emit(
         state.copyWith(
           status: RegisterStatus.registered,
-          errorMsg: "User Register Successfully",
+          errorMsg: "Your account has been created successfully",
         ),
       );
     } on FirebaseAuthException catch (exe) {
       final errorMessage = FirebaseAuthErrorHandler.getMessage(exe);
-
       emit(
         state.copyWith(
           status: RegisterStatus.registerFailure,

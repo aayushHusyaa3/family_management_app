@@ -67,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  List<String> memberSelection = ["Cheif", "Lead", "Board Member", "Guest"];
+  List<String> memberSelection = ["Chief", "Lead", "Board Member", "Guest"];
 
   void onTap() {
     setState(() {
@@ -158,12 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: AppColor.background,
       body: BlocListener<RegisterCubit, RegisterState>(
         listener: (context, state) {
-          if (state.status == RegisterStatus.emptyRegister) {
-            myAlertBox(context, subtittle: state.errorMsg);
-            setState(() {
-              isLoading1 = false;
-            });
-          } else if (state.status == RegisterStatus.registering) {
+          if (state.status == RegisterStatus.registering) {
             setState(() {
               isLoading1 = true;
             });
@@ -179,14 +174,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           } else if (state.status == RegisterStatus.registered) {
             myAlertBox(
               context,
-              heading: "Register Successful",
+              heading: "🎉 You're all set!",
               subtittle: state.errorMsg,
             );
             setState(() {
               isLoading1 = false;
             });
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.pushNamed(context, AppRoutes.loginScreen);
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.roleSelectionScreen,
+              );
             });
           }
         },
@@ -261,82 +259,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       });
                     },
                   ),
-                  myDropDownContainer(text: selectedMember, onPressed: onTap),
-                  SizedBox(height: 25.h),
-                  AnimatedSize(
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.easeIn,
-                    child: isDropdownVisible
-                        ? Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              border: BoxBorder.all(color: AppColor.secondary),
-                            ),
-                            child: Column(
-                              children: [
-                                dropDownContent(
-                                  text1: memberSelection[0],
-                                  text2:
-                                      "Full access to all features and settings",
-                                  onPressed: () {
-                                    selected(0);
-                                  },
-                                  index: 0,
-                                  isSelectedText: selectedIndex == 0
-                                      ? true
-                                      : false,
-                                  boxColor: selectedIndex == 0
-                                      ? AppColor.secondary
-                                      : AppColor.secondary.withAlpha(10),
-                                ),
-                                dropDownContent(
-                                  text1: memberSelection[1],
-                                  text2: "Full access except admin settings",
-                                  onPressed: () {
-                                    selected(1);
-                                  },
-
-                                  isSelectedText: selectedIndex == 1
-                                      ? true
-                                      : false,
-                                  boxColor: selectedIndex == 1
-                                      ? AppColor.secondary
-                                      : AppColor.secondary.withAlpha(10),
-                                ),
-                                dropDownContent(
-                                  text1: memberSelection[2],
-                                  text2: "Acces to assigned tasks and events",
-                                  onPressed: () {
-                                    selected(2);
-                                  },
-                                  isSelectedText: selectedIndex == 2
-                                      ? true
-                                      : false,
-                                  boxColor: selectedIndex == 2
-                                      ? AppColor.secondary
-                                      : AppColor.secondary.withAlpha(10),
-                                ),
-                                dropDownContent(
-                                  text1: memberSelection[3],
-                                  text2: "Temporary view-only access",
-                                  isDividee: false,
-                                  onPressed: () {
-                                    selected(3);
-                                  },
-                                  isSelectedText: selectedIndex == 3
-                                      ? true
-                                      : false,
-                                  index: 3,
-                                  boxColor: selectedIndex == 3
-                                      ? AppColor.secondary
-                                      : AppColor.secondary.withAlpha(10),
-                                ),
-                              ],
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                  ),
-                  isDropdownVisible ? SizedBox(height: 20.h) : Container(),
 
                   MyButtton(
                     text: "Sign Up",
@@ -366,7 +288,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 30.h),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.loginScreen);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.roleSelectionScreen,
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -481,3 +406,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+
+
+  // SizedBox(height: 25.h),
+  //                 AnimatedSize(
+  //                   duration: Duration(milliseconds: 500),
+  //                   curve: Curves.easeIn,
+  //                   child: isDropdownVisible
+  //                       ? Container(
+  //                           decoration: BoxDecoration(
+  //                             borderRadius: BorderRadius.circular(10.r),
+  //                             border: BoxBorder.all(color: AppColor.secondary),
+  //                           ),
+  //                           child: Column(
+  //                             children: [
+  //                               dropDownContent(
+  //                                 text1: memberSelection[0],
+  //                                 text2:
+  //                                     "Full access to all features and settings",
+  //                                 onPressed: () {
+  //                                   selected(0);
+  //                                 },
+  //                                 index: 0,
+  //                                 isSelectedText: selectedIndex == 0
+  //                                     ? true
+  //                                     : false,
+  //                                 boxColor: selectedIndex == 0
+  //                                     ? AppColor.secondary
+  //                                     : AppColor.secondary.withAlpha(10),
+  //                               ),
+  //                               dropDownContent(
+  //                                 text1: memberSelection[1],
+  //                                 text2: "Full access except admin settings",
+  //                                 onPressed: () {
+  //                                   selected(1);
+  //                                 },
+
+  //                                 isSelectedText: selectedIndex == 1
+  //                                     ? true
+  //                                     : false,
+  //                                 boxColor: selectedIndex == 1
+  //                                     ? AppColor.secondary
+  //                                     : AppColor.secondary.withAlpha(10),
+  //                               ),
+  //                               dropDownContent(
+  //                                 text1: memberSelection[2],
+  //                                 text2: "Acces to assigned tasks and events",
+  //                                 onPressed: () {
+  //                                   selected(2);
+  //                                 },
+  //                                 isSelectedText: selectedIndex == 2
+  //                                     ? true
+  //                                     : false,
+  //                                 boxColor: selectedIndex == 2
+  //                                     ? AppColor.secondary
+  //                                     : AppColor.secondary.withAlpha(10),
+  //                               ),
+  //                               dropDownContent(
+  //                                 text1: memberSelection[3],
+  //                                 text2: "Temporary view-only access",
+  //                                 isDividee: false,
+  //                                 onPressed: () {
+  //                                   selected(3);
+  //                                 },
+  //                                 isSelectedText: selectedIndex == 3
+  //                                     ? true
+  //                                     : false,
+  //                                 index: 3,
+  //                                 boxColor: selectedIndex == 3
+  //                                     ? AppColor.secondary
+  //                                     : AppColor.secondary.withAlpha(10),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         )
+  //                       : SizedBox.shrink(),
+  //                 ),
+  //                 isDropdownVisible ? SizedBox(height: 20.h) : Container(),

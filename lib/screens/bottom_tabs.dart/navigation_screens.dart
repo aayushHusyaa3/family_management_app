@@ -26,7 +26,7 @@ class _NavigationScreensState extends State<NavigationScreens> {
   String? role;
   int selectedIndex = 0;
   final Map<String, List<NavItem>> roleBasedNavigation = {
-    "Cheif": [
+    "Chief": [
       NavItem(
         page: HomeScreen(),
         icon: Icons.chrome_reader_mode,
@@ -90,6 +90,12 @@ class _NavigationScreensState extends State<NavigationScreens> {
         icon: Icons.chrome_reader_mode,
         label: "Home",
       ),
+      NavItem(
+        page: TasksScreen(),
+        icon: Icons.check_box_outlined,
+        label: "Tasks",
+      ),
+
       NavItem(page: KidsScreen(), icon: Icons.child_care, label: "Kids"),
       NavItem(page: MoreScreen(), icon: Icons.compare_arrows, label: "More"),
     ],
@@ -102,8 +108,8 @@ class _NavigationScreensState extends State<NavigationScreens> {
   }
 
   List<NavItem> get navItems {
-    final r = role ?? "Guest";
-    return roleBasedNavigation[r] ?? roleBasedNavigation['Guest']!;
+    final r = role ?? "Board Member";
+    return roleBasedNavigation[r] ?? roleBasedNavigation['Board Member']!;
   }
 
   @override
@@ -115,17 +121,16 @@ class _NavigationScreensState extends State<NavigationScreens> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          BlocBuilder<FetchUserCubit, FetchUserState>(
-            builder: (context, state) {
+          BlocConsumer<FetchUserCubit, FetchUserState>(
+            listener: (context, state) {
               if (state.status == FetchUserStatus.fetched) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (role != state.role) {
-                    setState(() {
-                      role = state.role ?? "Guest";
-                    });
-                  }
+                setState(() {
+                  role = state.role ?? "Board Member";
                 });
               }
+            },
+
+            builder: (context, state) {
               return Container(height: 1, color: AppColor.secondary);
             },
           ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
@@ -19,19 +21,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? taskCount;
+  String? urgentCount;
+  String? savedRole;
+  String? secureRole;
+
   @override
   void initState() {
     super.initState();
-    initialCallingFunction();
-  }
-
-  Future<String?> getRole() async {
-    return await SecureStorage.read(key: "role");
-  }
-
-  Future<void> initialCallingFunction() async {
     context.read<FetchUserCubit>().getUserRole();
-    context.read<FetchTasksCubit>().fetchTasks();
+    getSecureData();
+  }
+
+  String getRoleTitle(String role) {
+    switch (role) {
+      case 'Chief':
+        return 'Chief\nExecutive';
+      case 'Lead':
+        return 'Lead\nCoordinator';
+      case 'Board Member':
+        return 'Board\nMember';
+      case 'Guest':
+        return 'Guest\nUser';
+      default:
+        return 'Member';
+    }
+  }
+
+  Future<void> getSecureData() async {
+    final role = await SecureStorage.read(key: "role");
+    setState(() {
+      secureRole = role ?? "Guest";
+    });
   }
 
   List<IconData> icons = [
@@ -61,8 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
     "+5% this week",
     "1 requires action",
   ];
-  String? taskCount;
-  String? urgentCount;
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +98,31 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Row(
             children: [
-              MyProfileHolder(imagePath: AppImages.logo),
+              MyProfileHolder(imagePath: AppImages.logo, height: 40),
               SizedBox(width: 10.w),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.addTasksScreen);
-                },
-                child: Icon(Icons.add),
-              ),
+              secureRole == "Chief" || secureRole == "Lead"
+                  ? GestureDetector(
+                      onTap: () {
+                        showMyAddOptionsAlert(
+                          context: context,
+                          onAddTaskTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.addTasksScreen,
+                            );
+                          },
+                          onAddEventTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.addEventsScreen,
+                            );
+                          },
+                          onAddAppointmentTap: () {},
+                        );
+                      },
+                      child: Icon(Icons.add, size: 30.sp),
+                    )
+                  : SizedBox(),
             ],
           ),
         ],
@@ -100,10 +136,27 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BlocBuilder<FetchUserCubit, FetchUserState>(
+                  BlocConsumer<FetchUserCubit, FetchUserState>(
+                    listener: (context, state) {
+                      if (state.status == FetchUserStatus.fetched) {
+                        setState(() {
+                          savedRole = state.role ?? "Guest";
+                        });
+                        final role = state.role;
+                        final uid = state.uid;
+                        final email = state.email;
+                        log("Role from Cubit: $role");
+                        log("UID from Cubit: $uid");
+
+                        context.read<FetchTasksCubit>().fetchTasks(
+                          currentRole: role ?? "Guest",
+                          email: email ?? "",
+                        );
+                      }
+                    },
                     builder: (context, state) {
                       return Text(
-                        "Welcome back, ${state.role ?? getRole()} \nExecutive",
+                        "Welcome back, ${getRoleTitle(state.role ?? secureRole!)}",
                         style: t1heading().copyWith(fontSize: 30.sp),
                       );
                     },
@@ -115,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (state.status == FetchTasksStatus.fetching) {
                       } else if (state.status == FetchTasksStatus.fetched) {
                         setState(() {
-                          taskCount = state.taskCount?.toString() ?? "1";
+                          taskCount = state.taskCount.toString();
                           urgentCount = state.urgentCount?.toString() ?? "0";
                         });
                       }
@@ -132,18 +185,34 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           icon: icons[0],
                           headingText: headings[0],
-                          subtitle: taskCount ?? "1",
-                          noHeadingText: noHeadings[0],
-                          subWidget: (state) {
-                            if (state.status == FetchTasksStatus.fetching) {
+                          subtitle: taskCount ?? "N/A",
+                          subWidget: () {
+                            final userState = context
+                                .watch<FetchUserCubit>()
+                                .state;
+                            final taskState = context
+                                .watch<FetchTasksCubit>()
+                                .state;
+
+                            final isLoadingUser =
+                                userState.status == FetchUserStatus.fetching ||
+                                userState.status ==
+                                    FetchUserStatus.initialFetching;
+                            final isLoadingTasks =
+                                taskState.status == FetchTasksStatus.fetching;
+
+                            if (isLoadingUser || isLoadingTasks) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5),
                                 child: myShimmerTextBox(width: 40, height: 35),
                               );
                             } else {
-                              return Text(taskCount ?? "1", style: t1heading());
+                              return Text(
+                                taskCount ?? "N/A",
+                                style: t1heading(),
+                              );
                             }
-                          }(context.watch<FetchTasksCubit>().state),
+                          }(),
                           feedback: "${urgentCount ?? "0"} urgent",
                         ),
                         MyTaskHolderBox(
@@ -157,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           headingText: headings[1],
                           subtitle: subtitles[1],
                           feedback: feedbacks[1],
-                          noHeadingText: noHeadings[1],
                         ),
                       ],
                     ),
@@ -172,7 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         headingText: headings[2],
                         subtitle: subtitles[2],
                         feedback: feedbacks[2],
-                        noHeadingText: noHeadings[2],
                       ),
                       MyTaskHolderBox(
                         onPressed: () {},
@@ -180,7 +247,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         headingText: headings[3],
                         subtitle: subtitles[3],
                         feedback: feedbacks[3],
-                        noHeadingText: noHeadings[3],
                       ),
                     ],
                   ),

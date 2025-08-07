@@ -5,7 +5,6 @@ enum RegisterStatus {
   registering,
   registered,
   registerFailure,
-  emptyRegister,
 }
 
 class RegisterState extends Equatable {

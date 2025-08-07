@@ -6,6 +6,10 @@ enum FetchTasksStatus {
   fetched,
   fetchingError,
 
+  fetchedStatusTasks,
+  fetchingStatusTasks,
+  fetchingStatusTasksError,
+
   deleting,
   deletingFailed,
   deleted,

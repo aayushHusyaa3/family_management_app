@@ -17,7 +17,7 @@ class _OnboardingScreen2State extends State<OnboardingScreen2> {
   Future<void> finishOnBoarding(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("isFirstInstall", false);
-    Navigator.pushNamed(context, AppRoutes.registerScreen);
+    Navigator.pushReplacementNamed(context, AppRoutes.registerScreen);
   }
 
   @override

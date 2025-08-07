@@ -5,6 +5,7 @@ import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/utils.dart';
 import 'package:family_management_app/bloc/login/login_cubit.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,18 +52,23 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColor.background,
       body: BlocListener<LoginCubit, LoginState>(
-        listener: (context, state) async {
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) {
           if (state.status == LoginStatus.logging) {
-            setState(() => isLoading1 = true);
-          } else if (state.status == LoginStatus.loginFailure) {
-            setState(() => isLoading1 = false);
-
-            await myAlertBox(context, subtittle: state.errorMsg);
-            log("this is printed MUltiple times");
+            setState(() {
+              isLoading1 = true;
+            });
           } else if (state.status == LoginStatus.logged) {
-            setState(() => isLoading1 = false);
-            mySnackBar(context, title: state.errorMsg!);
+            setState(() {
+              isLoading1 = false;
+            });
+
             Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
+          } else if (state.status == LoginStatus.loginFailure) {
+            setState(() {
+              isLoading1 = false;
+            });
+            myAlertBox(context, subtittle: state.errorMsg!);
           }
         },
         child: Center(
@@ -99,25 +105,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  MyButtton(
-                    text: "Sign In",
-                    isLoading: isLoading1,
+                  BlocBuilder<LoginCubit, LoginState>(
+                    builder: (context, state) {
+                      return MyButtton(
+                        text: "Sign In",
+                        isLoading: isLoading1,
 
-                    onPressed: () async {
-                      _validateEmail(userEmailController.text.trim());
-                      _validatePassword(userPasswordController.text.toString());
-                      if (passwordError == null && emailError == null) {
-                        context.read<LoginCubit>().login(
-                          email: userEmailController.text.trim(),
-                          password: userPasswordController.text.trim(),
-                        );
-                      }
+                        onPressed: () {
+                          _validateEmail(userEmailController.text.trim());
+                          _validatePassword(
+                            userPasswordController.text.toString(),
+                          );
+                          if (passwordError == null && emailError == null) {
+                            context.read<LoginCubit>().login(
+                              email: userEmailController.text.toString(),
+                              password: userPasswordController.text.toString(),
+                            );
+                          }
+                        },
+                      );
                     },
                   ),
                   SizedBox(height: 30.h),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.registerScreen);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.registerScreen,
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

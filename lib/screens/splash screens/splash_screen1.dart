@@ -18,7 +18,6 @@ class _SplashScreen1State extends State<SplashScreen1>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -26,7 +25,7 @@ class _SplashScreen1State extends State<SplashScreen1>
     checkFlowAndNavigate(context);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 250.0).animate(_controller);
@@ -41,19 +40,8 @@ class _SplashScreen1State extends State<SplashScreen1>
   }
 
   Future<void> checkFlowAndNavigate(context) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    bool isFirstInstall = pref.getBool("isFirstInstall") ?? true;
-    User? user = auth.currentUser;
-    Future.delayed(Duration(seconds: 3), () {
-      if (isFirstInstall) {
-        Navigator.pushNamed(context, AppRoutes.onBoardingScreen);
-      } else {
-        if (user != null && user.uid.isNotEmpty) {
-          Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
-        } else {
-          Navigator.pushNamed(context, AppRoutes.loginScreen);
-        }
-      }
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, AppRoutes.onBoardingScreen);
     });
   }
 

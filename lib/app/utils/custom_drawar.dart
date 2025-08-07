@@ -4,6 +4,7 @@ import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/utils.dart';
 import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
+import 'package:family_management_app/service/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,9 +18,25 @@ class MyCustomDrawar extends StatefulWidget {
 
 class _MyCustomDrawarState extends State<MyCustomDrawar> {
   String? role;
+  String? secureRole;
+  String? name;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<FetchUserCubit>().getUserRole();
+    getSecureData();
+  }
+
+  Future<void> getSecureData() async {
+    final role = await SecureStorage.read(key: "role");
+    setState(() {
+      secureRole = role ?? "Guest";
+    });
+  }
 
   Map<String, List> getIcon(BuildContext context) {
-    if (role == "Cheif" || role == "Lead") {
+    if (role == "Chief" || role == "Lead") {
       return {
         "icons": [
           Icons.home,
@@ -126,15 +143,21 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
       backgroundColor: AppColor.background,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 70.h, horizontal: 30.w),
-        child: BlocBuilder<FetchUserCubit, FetchUserState>(
-          builder: (context, state) {
+        child: BlocConsumer<FetchUserCubit, FetchUserState>(
+          listener: (context, state) {
             if (state.status == FetchUserStatus.fetched) {
-              role = state.role ?? "Guest";
-            } else if (state.status == FetchUserStatus.fetching) {
+              setState(() {
+                role = state.role ?? "Board Member";
+                name = state.name ?? "User";
+              });
+            }
+          },
+          builder: (context, state) {
+            if (state.status == FetchUserStatus.fetching) {
               return myTasksShimmerBox(
                 width: double.infinity,
                 height: 50,
-                itemCount: 6,
+                itemCount: 8,
               );
             }
             return Column(
@@ -153,7 +176,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Aayush",
+                          name ?? "User",
                           style: t1heading().copyWith(fontSize: 20.sp),
                         ),
                         Text(

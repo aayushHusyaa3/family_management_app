@@ -10,22 +10,36 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
   FetchTasksCubit()
     : super(FetchTasksState(status: FetchTasksStatus.initialFetching));
 
-  Future<void> fetchTasks() async {
+  Future<void> fetchTasks({
+    required String currentRole,
+    required String email,
+    String? status,
+  }) async {
     emit(
       state.copyWith(
         status: FetchTasksStatus.fetching,
-        errorMsg: "Tasks is being fetched.... Please Wait",
+        errorMsg: "Tasks are being fetched... Please wait",
       ),
     );
 
     try {
-      final firestore = await FirebaseFirestore.instance
-          .collection('tasks')
-          .get();
+      Query query = FirebaseFirestore.instance.collection('tasks');
+
+      if (currentRole != "Chief") {
+        query = query.where("assignedMember", isEqualTo: email);
+      }
+
+      if (status != null && status.isNotEmpty) {
+        query = query.where("status", isEqualTo: status);
+      }
+
+      // Fetch tasks
+      final firestore = await query.get();
       final taskCount = firestore.docs.length;
 
+      // Map Firestore docs to TaskInfo objects
       final userList = firestore.docs.map((doc) {
-        final data = doc.data();
+        final data = doc.data() as Map<String, dynamic>;
         return TaskInfo(
           taskId: doc.id,
           title: data['title'] ?? '',
@@ -36,25 +50,33 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
           isChecked: false,
         );
       }).toList();
+
+      // Generate a new task ID for adding tasks
       final String taskId = FirebaseFirestore.instance
           .collection('tasks')
           .doc()
           .id;
-      final urgentCount = await FirebaseFirestore.instance
-          .collection('tasks')
-          .where("priority", isEqualTo: "High")
-          .get();
 
+      // Urgent tasks count (role-based as well)
+      Query urgentQuery = FirebaseFirestore.instance
+          .collection('tasks')
+          .where("priority", isEqualTo: "High");
+
+      if (currentRole != "Chief") {
+        urgentQuery = urgentQuery.where("assignedMember", isEqualTo: email);
+      }
+      final urgentCountSnapshot = await urgentQuery.get();
       emit(
         state.copyWith(
           status: FetchTasksStatus.fetched,
-          errorMsg: "Tasks Fetched Sucessfully",
+          errorMsg: "Tasks fetched successfully",
           taskCount: taskCount,
           taskInfoList: userList,
           taskId: taskId,
-          urgentCount: urgentCount.docs.length,
+          urgentCount: urgentCountSnapshot.docs.length,
         ),
       );
+      log('$taskCount');
     } on FirebaseException catch (exe) {
       emit(
         state.copyWith(
@@ -65,13 +87,126 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
     }
   }
 
-  Future<void> deleteTask({required List<String> taskId}) async {
+  // Future<void> fetchStatusTasks(String status) async {
+  //   emit(
+  //     state.copyWith(
+  //       status: FetchTasksStatus.fetchingStatusTasks,
+  //       errorMsg: "Tasks is being fetched.... Please Wait",
+  //     ),
+  //   );
+
+  //   try {
+  //     final firestore = await FirebaseFirestore.instance
+  //         .collection('tasks')
+  //         .where("status", isEqualTo: status)
+  //         .get();
+  //     final taskCount = firestore.docs.length;
+
+  //     final userList = firestore.docs.map((doc) {
+  //       final data = doc.data();
+  //       return TaskInfo(
+  //         taskId: doc.id,
+  //         title: data['title'] ?? '',
+  //         description: data['description'] ?? '',
+  //         priority: data['priority'] ?? '',
+  //         date: data['date'] ?? '',
+  //         assignedTo: data['assignedMember'] ?? '',
+  //         isChecked: false,
+  //       );
+  //     }).toList();
+  //     final String taskId = FirebaseFirestore.instance
+  //         .collection('tasks')
+  //         .doc()
+  //         .id;
+
+  //     emit(
+  //       state.copyWith(
+  //         status: FetchTasksStatus.fetchedStatusTasks,
+  //         errorMsg: "Tasks Fetched Sucessfully",
+  //         taskCount: taskCount,
+  //         taskInfoList: userList,
+  //         taskId: taskId,
+  //       ),
+  //     );
+  //   } on FirebaseException catch (exe) {
+  //     emit(
+  //       state.copyWith(
+  //         status: FetchTasksStatus.fetchingStatusTasksError,
+  //         errorMsg: exe.message,
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // Future<void> fetchTasks() async {
+  //   emit(
+  //     state.copyWith(
+  //       status: FetchTasksStatus.fetching,
+  //       errorMsg: "Tasks is being fetched.... Please Wait",
+  //     ),
+  //   );
+
+  //   try {
+  //     final firestore = await FirebaseFirestore.instance
+  //         .collection('tasks')
+  //         .get();
+  //     final taskCount = firestore.docs.length;
+
+  //     final userList = firestore.docs.map((doc) {
+  //       final data = doc.data();
+  //       return TaskInfo(
+  //         taskId: doc.id,
+  //         title: data['title'] ?? '',
+  //         description: data['description'] ?? '',
+  //         priority: data['priority'] ?? '',
+  //         date: data['date'] ?? '',
+  //         assignedTo: data['assignedMember'] ?? '',
+  //         isChecked: false,
+  //       );
+  //     }).toList();
+  //     final String taskId = FirebaseFirestore.instance
+  //         .collection('tasks')
+  //         .doc()
+  //         .id;
+  //     final urgentCount = await FirebaseFirestore.instance
+  //         .collection('tasks')
+  //         .where("priority", isEqualTo: "High")
+  //         .get();
+
+  //     emit(
+  //       state.copyWith(
+  //         status: FetchTasksStatus.fetched,
+  //         errorMsg: "Tasks Fetched Sucessfully",
+  //         taskCount: taskCount,
+  //         taskInfoList: userList,
+  //         taskId: taskId,
+  //         urgentCount: urgentCount.docs.length,
+  //       ),
+  //     );
+  //   } on FirebaseException catch (exe) {
+  //     emit(
+  //       state.copyWith(
+  //         status: FetchTasksStatus.fetchingError,
+  //         errorMsg: exe.message,
+  //       ),
+  //     );
+  //   }
+  // }
+
+  Future<void> deleteTask({
+    required List<String> taskId,
+    String? currentRole,
+    String? currentUserId,
+  }) async {
     emit(
       state.copyWith(
         status: FetchTasksStatus.deleting,
         errorMsg: "Deleting selected task(s).... Please Wait",
       ),
     );
+    Future.delayed(Duration(milliseconds: 500), () {
+      removeTasks(taskId);
+    });
 
     try {
       for (var task in taskId) {
@@ -86,10 +221,6 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
           errorMsg: "$deleteTaskCount $taskCount deleted sucessfully",
         ),
       );
-
-      await Future.delayed(Duration(seconds: 1), () {
-        emit(state.copyWith(status: FetchTasksStatus.fetched));
-      });
     } on FirebaseException catch (exe) {
       emit(
         state.copyWith(
@@ -105,15 +236,23 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
     try {
       for (var task in taskId) {
         await FirebaseFirestore.instance.collection('tasks').doc(task).update({
-          'isCompleted': true,
+          'status': "completed",
+          "priority": "completed",
         });
       }
+      Future.delayed(Duration(milliseconds: 500), () {
+        removeTasks(taskId);
+      });
+      final updatedList = state.taskInfoList!
+          .where((task) => !taskId.contains(task.taskId))
+          .toList();
       final int markTaskCount = taskId.length;
       final String taskCount = markTaskCount == 1 ? "task" : "tasks";
 
       emit(
         state.copyWith(
           status: FetchTasksStatus.marked,
+          taskInfoList: updatedList,
           errorMsg: "$markTaskCount $taskCount completed Sucessfully",
         ),
       );

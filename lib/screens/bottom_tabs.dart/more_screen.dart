@@ -17,14 +17,6 @@ class MoreScreen extends StatefulWidget {
 }
 
 class _MoreScreenState extends State<MoreScreen> {
-  Future<String?> getEmail() async {
-    return await SecureStorage.read(key: 'email');
-  }
-
-  Future<String?> getRole() async {
-    return await SecureStorage.read(key: 'role');
-  }
-
   List<IconData> iconsList = [
     Icons.security, // Security
     Icons.notifications, // Notifications
@@ -88,71 +80,80 @@ class _MoreScreenState extends State<MoreScreen> {
             children: List.generate(moreOptions.length, (index) {
               return Padding(
                 padding: EdgeInsetsGeometry.only(bottom: 15.h),
-                child: myTextHolderContainer(
-                  borderColor: index == 8 ? AppColor.error : AppColor.secondary,
-                  horizontal: 15.w,
-                  child: GestureDetector(
-                    onTap: () {
-                      bloc.logOut();
-                    },
-                    child: Row(
-                      children: [
-                        index == 0
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColor.secondary,
-                                ),
+                child: GestureDetector(
+                  onTap: index == 8
+                      ? () async {
+                          bloc.logOut();
+                          await SecureStorage.deleteAll();
+                        }
+                      : () {},
+                  child: myTextHolderContainer(
+                    borderColor: index == 8
+                        ? AppColor.error
+                        : AppColor.secondary,
+                    horizontal: 15.w,
+                    child: BlocListener<FetchUserCubit, FetchUserState>(
+                      listener: (context, state) {
+                        if (state.status == FetchUserStatus.loggedOut) {
+                          Navigator.pushNamed(context, AppRoutes.loginScreen);
+                          mySnackBar(context, title: "log out Successfully");
+                        } else if (state.status == FetchUserStatus.logouting) {}
+                      },
+                      child: GestureDetector(
+                        child: Row(
+                          children: [
+                            index == 0
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColor.secondary,
+                                    ),
 
-                                child: Padding(
-                                  padding: EdgeInsets.all(5.r),
-                                  child: Icon(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(5.r),
+                                      child: Icon(
+                                        iconsList[index],
+                                        color: AppColor.blackColor,
+                                        size: 22.sp,
+                                      ),
+                                    ),
+                                  )
+                                : Icon(
                                     iconsList[index],
-                                    color: AppColor.blackColor,
-                                    size: 22.sp,
-                                  ),
-                                ),
-                              )
-                            : Icon(
-                                iconsList[index],
-                                color: index == 8
-                                    ? AppColor.error
-                                    : AppColor.secondary,
-                                size: 25.sp,
-                              ),
-                        SizedBox(width: 7.w),
-                        BlocBuilder<FetchUserCubit, FetchUserState>(
-                          builder: (context, state) {
-                            if (state.status == FetchUserStatus.logout) {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.loginScreen,
-                              );
-                            }
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  index == 0
-                                      ? "${state.email}"
-                                      : moreOptions[index]["title"]!,
-                                  style: t3White().copyWith(
                                     color: index == 8
                                         ? AppColor.error
-                                        : AppColor.textSecondary,
+                                        : AppColor.secondary,
+                                    size: 25.sp,
                                   ),
-                                ),
-                                Text(
-                                  index == 0
-                                      ? "${state.role ?? getRole()}"
-                                      : moreOptions[index]['subtitle']!,
-                                  style: hintTextStyle(),
-                                ),
-                              ],
-                            );
-                          },
+                            SizedBox(width: 7.w),
+                            BlocBuilder<FetchUserCubit, FetchUserState>(
+                              builder: (context, state) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      index == 0
+                                          ? state.email ?? "admin@homeops.com"
+                                          : moreOptions[index]["title"]!,
+                                      style: t3White().copyWith(
+                                        color: index == 8
+                                            ? AppColor.error
+                                            : AppColor.textSecondary,
+                                      ),
+                                    ),
+                                    Text(
+                                      index == 0
+                                          ? state.role ?? "Chief"
+                                          : moreOptions[index]['subtitle']!,
+                                      style: hintTextStyle(),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

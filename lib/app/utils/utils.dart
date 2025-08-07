@@ -6,7 +6,8 @@ import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -40,13 +41,9 @@ class _MyButttonState extends State<MyButtton> {
           borderRadius: BorderRadius.circular(35.r),
         ),
         child: widget.isLoading
-            ? SizedBox(
-                height: 60.h,
-                width: 60.h,
-                child: LoadingIndicator(
-                  indicatorType: Indicator.pacman,
-                  colors: [AppColor.blackColor],
-                ),
+            ? LoadingAnimationWidget.inkDrop(
+                color: AppColor.dropDownColor,
+                size: 40.h,
               )
             : Text(widget.text, style: t1()),
       ),
@@ -168,7 +165,7 @@ class MyProfileHolder extends StatelessWidget {
 class MyTaskHolderBox extends StatelessWidget {
   final IconData icon;
   final String headingText;
-  final String? noHeadingText;
+
   final String subtitle;
   final String feedback;
   final Widget? subWidget;
@@ -181,7 +178,7 @@ class MyTaskHolderBox extends StatelessWidget {
     required this.feedback,
     required this.headingText,
     this.subWidget,
-    this.noHeadingText,
+
     required this.onPressed,
   });
 
@@ -201,18 +198,9 @@ class MyTaskHolderBox extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10.h),
           child: Column(
             children: [
-              Icon(
-                subtitle == 0.toString() ? Icons.add : icon,
-                color: AppColor.secondary,
-                size: 35.sp,
-              ),
+              Icon(icon, color: AppColor.secondary, size: 35.sp),
               SizedBox(height: 3.h),
-              Text(
-                subtitle == 0.toString()
-                    ? noHeadingText ?? "Add Tasks"
-                    : headingText,
-                style: t2White(),
-              ),
+              Text(headingText, style: t2White()),
               subWidget == null
                   ? Text(subtitle, style: t1heading())
                   : subWidget!,
@@ -229,14 +217,14 @@ class MyTaskHolderBox extends StatelessWidget {
   }
 }
 
-Future<void> myAlertBox(
+void myAlertBox(
   BuildContext context, {
   String heading = "Sign In Failed",
   required subtittle,
 }) async {
   return showDialog(
     context: context,
-    useRootNavigator: true,
+
     barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -261,7 +249,7 @@ Future<void> myAlertBox(
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.pop(context);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -974,4 +962,118 @@ void showImagePickerAlert({
       ),
     ),
   );
+}
+
+void showMyAddOptionsAlert({
+  required BuildContext context,
+  required VoidCallback onAddTaskTap,
+  required VoidCallback onAddEventTap,
+  required VoidCallback onAddAppointmentTap,
+}) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: AppColor.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(color: AppColor.border, width: 2),
+      ),
+      title: Text("Create New", style: t1heading().copyWith(fontSize: 20.sp)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Add Task
+          ListTile(
+            leading: Icon(Icons.check_circle_outline, color: AppColor.text),
+            title: Text("Add Task", style: t3White()),
+            onTap: () {
+              Navigator.pop(context);
+              onAddTaskTap();
+            },
+          ),
+          Divider(color: AppColor.border),
+
+          // Add Event
+          ListTile(
+            leading: Icon(Icons.event, color: AppColor.text),
+            title: Text("Add Event", style: t3White()),
+            onTap: () {
+              Navigator.pop(context);
+              onAddEventTap();
+            },
+          ),
+          Divider(color: AppColor.border),
+
+          // Add Appointment
+          ListTile(
+            leading: Icon(Icons.schedule, color: AppColor.text),
+            title: Text("Add Appointment", style: t3White()),
+            onTap: () {
+              Navigator.pop(context);
+              onAddAppointmentTap();
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class BoardCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String imagePath;
+  final VoidCallback onTap;
+
+  const BoardCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.imagePath,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 300.h,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: AppColor.surface,
+          borderRadius: BorderRadius.circular(20.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.border,
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: const Offset(0, 5),
+            ),
+          ],
+          border: Border.all(color: AppColor.secondary, width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Top Text
+            Text(title, style: t1heading(), textAlign: TextAlign.center),
+            SizedBox(height: 4.h),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColor.text,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.h),
+          ],
+        ),
+      ),
+    );
+  }
 }

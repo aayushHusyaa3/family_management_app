@@ -3,8 +3,10 @@ import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,11 +19,12 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<double> tweenController;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    navigateToNextSplashScreen(context);
+    checkFlowAndNavigate(context);
     animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 2500),
@@ -39,9 +42,20 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  Future<void> navigateToNextSplashScreen(context) async {
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushNamed(context, AppRoutes.splashScreen1);
+  Future<void> checkFlowAndNavigate(context) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    bool isFirstInstall = pref.getBool("isFirstInstall") ?? true;
+    User? user = auth.currentUser;
+    Future.delayed(Duration(seconds: 2), () {
+      if (isFirstInstall) {
+        Navigator.pushReplacementNamed(context, AppRoutes.splashScreen1);
+      } else {
+        if (user != null && user.uid.isNotEmpty) {
+          Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+        }
+      }
     });
   }
 

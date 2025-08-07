@@ -16,7 +16,7 @@ class MultiBlocWidget extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => RegisterCubit()),
-        BlocProvider(create: (context) => FetchUserCubit()),
+        BlocProvider(create: (context) => FetchUserCubit()..getUserRole()),
         BlocProvider(create: (context) => FetchTasksCubit()),
         BlocProvider(create: (context) => AddTasksCubit()),
         // BlocProvider(create: (context) => PickImageCubit()),

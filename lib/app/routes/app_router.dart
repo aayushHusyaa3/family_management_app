@@ -1,6 +1,7 @@
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/screens/auth_credential/login_screen.dart';
 import 'package:family_management_app/screens/auth_credential/register_screen.dart';
+import 'package:family_management_app/screens/auth_credential/role_selection_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/calender_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/home_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/kids_screen.dart';
@@ -10,6 +11,7 @@ import 'package:family_management_app/screens/bottom_tabs.dart/tasks_screen.dart
 import 'package:family_management_app/screens/drawer_navigation/Weekly_insights.dart';
 import 'package:family_management_app/screens/drawer_navigation/command_center.dart';
 import 'package:family_management_app/screens/drawer_navigation/shopping.dart';
+import 'package:family_management_app/screens/functionality/addevents_screen.dart';
 import 'package:family_management_app/screens/functionality/addtask_screen.dart';
 
 import 'package:family_management_app/screens/onBoardScreen/onboarding_Screen1.dart';
@@ -82,6 +84,10 @@ class AppRouter {
       return transtionTo(MoreScreen());
     } else if (settings.name == AppRoutes.addTasksScreen) {
       return transtionTo(AddtaskScreen());
+    } else if (settings.name == AppRoutes.addEventsScreen) {
+      return transtionTo(AddEventsScreen());
+    } else if (settings.name == AppRoutes.roleSelectionScreen) {
+      return transtionTo(RoleSelectionScreen());
     } else {
       return transtionTo(SplashScreen());
     }

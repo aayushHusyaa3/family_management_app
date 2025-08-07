@@ -35,6 +35,7 @@ class FetchUserCubit extends Cubit<FetchUserState> {
           role: role,
           email: email,
           name: name,
+          uid: uid,
           errorMsg: "User Fetched Successfully",
         ),
       );
@@ -56,16 +57,27 @@ class FetchUserCubit extends Cubit<FetchUserState> {
   }
 
   Future<void> logOut() async {
+    emit(
+      state.copyWith(
+        status: FetchUserStatus.logouting,
+        errorMsg: "Logging Out.... Please Wait",
+      ),
+    );
     try {
       await FirebaseAuth.instance.signOut();
       emit(
         state.copyWith(
-          status: FetchUserStatus.logout,
+          status: FetchUserStatus.loggedOut,
           errorMsg: "log Out Successfully",
         ),
       );
     } on FirebaseAuthException catch (exe) {
-      throw Exception(exe);
+      emit(
+        state.copyWith(
+          status: FetchUserStatus.logoutFailed,
+          errorMsg: exe.toString(),
+        ),
+      );
     }
   }
 
