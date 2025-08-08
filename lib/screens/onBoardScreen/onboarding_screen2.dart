@@ -32,15 +32,18 @@ class _OnboardingScreen2State extends State<OnboardingScreen2> {
             children: [
               SizedBox(height: 30.h),
               Text(
-                "Less juggling. More\ncontrol.",
+                "Less juggling. More control.",
                 style: t1heading(),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 10.h),
-              Text(
-                "Transform chaos into order. Master the art of family managemnet with tools desgined for the modern parent executive.",
-                style: t2White(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  "Transform chaos into order. Master the art of family managemnet with tools desgined for the modern parent executive.",
+                  style: t2White(),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
               ),
               Spacer(),
               Column(

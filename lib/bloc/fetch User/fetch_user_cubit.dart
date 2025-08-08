@@ -27,6 +27,7 @@ class FetchUserCubit extends Cubit<FetchUserState> {
       final role = doc.data()?['role'] as String?;
       final email = doc.data()?['email'] as String?;
       final name = doc.data()?['name'] as String?;
+      final imagePath = doc.data()?['imagePath'] as String?;
       log("UID: $uid, EMAIL: $email, ROLE: $role");
 
       emit(
@@ -37,6 +38,7 @@ class FetchUserCubit extends Cubit<FetchUserState> {
           name: name,
           uid: uid,
           errorMsg: "User Fetched Successfully",
+          imagePath: imagePath,
         ),
       );
     } on FirebaseAuthException catch (exe) {

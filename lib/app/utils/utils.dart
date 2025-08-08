@@ -6,6 +6,7 @@ import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:loading_indicator/loading_indicator.dart';
@@ -137,12 +138,12 @@ class MyTextField extends StatelessWidget {
 }
 
 class MyProfileHolder extends StatelessWidget {
-  final String imagePath;
+  final String? imagePath;
   final int width;
   final int height;
   const MyProfileHolder({
     super.key,
-    required this.imagePath,
+    this.imagePath,
     this.width = 35,
     this.height = 35,
   });
@@ -154,7 +155,12 @@ class MyProfileHolder extends StatelessWidget {
       height: height.h,
       decoration: BoxDecoration(
         border: BoxBorder.all(width: 1, color: AppColor.secondary),
-        image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+        image: DecorationImage(
+          image: imagePath != null
+              ? NetworkImage(imagePath!)
+              : AssetImage(AppImages.profilePlaceholder),
+          fit: BoxFit.cover,
+        ),
 
         shape: BoxShape.circle,
       ),
@@ -868,7 +874,7 @@ class _MySearchFieldState extends State<MySearchField> {
 }
 
 Widget imageHolderWithCamera({
-  File? imagePath,
+  XFile? imagePath,
   required VoidCallback onPressed,
 }) {
   return Padding(
@@ -887,7 +893,7 @@ Widget imageHolderWithCamera({
               border: Border.all(width: 2, color: AppColor.secondary),
               image: DecorationImage(
                 image: imagePath != null
-                    ? FileImage(imagePath)
+                    ? FileImage(File(imagePath.path))
                     : AssetImage(AppImages.profilePlaceholder) as ImageProvider,
                 fit: BoxFit.cover,
               ),
@@ -1035,45 +1041,114 @@ class BoardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 300.h,
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: AppColor.surface,
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: AppColor.border,
-              blurRadius: 10,
-              spreadRadius: 1,
-              offset: const Offset(0, 5),
-            ),
-          ],
-          border: Border.all(color: AppColor.secondary, width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Top Text
-            Text(title, style: t1heading(), textAlign: TextAlign.center),
-            SizedBox(height: 4.h),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColor.text,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 20.w),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+
+          // padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: AppColor.dropDownColor,
+            borderRadius: BorderRadius.circular(15.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white12,
+                blurRadius: 5,
+                spreadRadius: 1,
+                offset: const Offset(0, 5),
               ),
+            ],
+            border: Border.all(color: AppColor.secondary, width: 1),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 15.w),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: t1heading().copyWith(color: AppColor.textSecondary),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8.h),
+                Image.asset(imagePath, fit: BoxFit.cover, height: 150.h),
+                SizedBox(height: 4.h),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        subtitle,
+                        textAlign: TextAlign.start,
+                        style: hintTextStyle(),
+                      ),
+                    ),
+                    SizedBox(width: 5.w),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.secondary,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: onTap,
+                          child: Icon(
+                            Icons.keyboard_double_arrow_right_rounded,
+                            size: 25.sp,
+
+                            color: AppColor.dropDownColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+              ],
             ),
-            SizedBox(height: 8.h),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+void showCustomBoardModalBottomSheet(
+  BuildContext context, {
+
+  required Widget Function(void Function(VoidCallback) setState) builder,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    enableDrag: true,
+    isDismissible: true,
+    backgroundColor: AppColor.dropDownColor,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Wrap(
+              children: [
+                builder(
+                  setModalState,
+                ), // You can call setModalState to update UI
+              ],
+            );
+          },
+        ),
+      ),
+    ),
+  );
 }

@@ -25,16 +25,22 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 30.h),
-              Text(
-                "You're the\nCEO Of your life",
-                style: t1heading(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  "You're the CEO Of your life",
+                  style: t1heading(),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
               ),
               SizedBox(height: 10.h),
-              Text(
-                "And this is your\ncommand center",
-                style: t2White(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  "And this is your command center",
+                  style: t2White(),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
               ),
               Spacer(),
 

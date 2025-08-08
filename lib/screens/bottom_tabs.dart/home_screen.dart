@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:family_management_app/app/app%20Color/app_color.dart';
-import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/custom_drawar.dart';
@@ -25,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? urgentCount;
   String? savedRole;
   String? secureRole;
+  String? imageUrl;
 
   @override
   void initState() {
@@ -98,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Row(
             children: [
-              MyProfileHolder(imagePath: AppImages.logo, height: 40),
+              MyProfileHolder(imagePath: imageUrl, height: 40),
               SizedBox(width: 10.w),
               secureRole == "Chief" || secureRole == "Lead"
                   ? GestureDetector(
@@ -141,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (state.status == FetchUserStatus.fetched) {
                         setState(() {
                           savedRole = state.role ?? "Guest";
+                          imageUrl = state.imagePath;
                         });
                         final role = state.role;
                         final uid = state.uid;

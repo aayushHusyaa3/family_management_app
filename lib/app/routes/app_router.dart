@@ -2,6 +2,7 @@ import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/screens/auth_credential/login_screen.dart';
 import 'package:family_management_app/screens/auth_credential/register_screen.dart';
 import 'package:family_management_app/screens/auth_credential/role_selection_screen.dart';
+import 'package:family_management_app/screens/auth_credential/waiting_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/calender_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/home_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/kids_screen.dart';
@@ -88,6 +89,8 @@ class AppRouter {
       return transtionTo(AddEventsScreen());
     } else if (settings.name == AppRoutes.roleSelectionScreen) {
       return transtionTo(RoleSelectionScreen());
+    } else if (settings.name == AppRoutes.waitingScreen) {
+      return transtionTo(WaitingScreen());
     } else {
       return transtionTo(SplashScreen());
     }

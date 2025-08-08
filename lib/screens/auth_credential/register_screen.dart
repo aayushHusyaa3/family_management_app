@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/utils.dart';
-
 import 'package:family_management_app/bloc/register/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,19 +22,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController userPasswordConformController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   List<bool> isHide = [true, true];
-  bool isDropdownVisible = false;
-  int? selectedIndex;
-  bool isSelectedText = false;
+
   String selectedMember = "Guest";
   bool isLoading1 = false;
-  File? _croppedImage;
+
+  XFile? pickedImage;
 
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
   String? errorName;
 
-  Future<void> pickAndCropImage(ImageSource source) async {
+  Future<void> pickImageAndCrop(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
 
     final XFile? pickedFile = await picker.pickImage(source: source);
@@ -47,11 +44,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: "Crop Image",
-          toolbarColor: AppColor.surface,
-          toolbarWidgetColor: AppColor.text,
-          backgroundColor: AppColor.background,
-          statusBarColor: AppColor.background,
-          activeControlsWidgetColor: AppColor.text,
+          toolbarColor: Colors.black,
+          toolbarWidgetColor: Colors.white,
+          backgroundColor: Colors.black,
+          statusBarColor: Colors.black,
+          activeControlsWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.square,
           cropStyle: CropStyle.rectangle,
           lockAspectRatio: false,
@@ -60,46 +57,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ],
     );
 
-    if (croppedFile != null) {
-      setState(() {
-        _croppedImage = File(croppedFile.path);
-      });
-    }
-  }
-
-  List<String> memberSelection = ["Chief", "Lead", "Board Member", "Guest"];
-
-  void onTap() {
+    if (croppedFile == null) return;
     setState(() {
-      isDropdownVisible = !isDropdownVisible;
-      isSelectedText = true;
-    });
-  }
-
-  void selected(int index) {
-    setState(() {
-      selectedIndex = index;
-      if (index == 0) {
-        setState(() {
-          selectedMember = memberSelection[0];
-          isDropdownVisible = false;
-        });
-      } else if (index == 1) {
-        setState(() {
-          selectedMember = memberSelection[1];
-          isDropdownVisible = false;
-        });
-      } else if (index == 2) {
-        setState(() {
-          selectedMember = memberSelection[2];
-          isDropdownVisible = false;
-        });
-      } else if (index == 3) {
-        setState(() {
-          selectedMember = memberSelection[3];
-          isDropdownVisible = false;
-        });
-      }
+      pickedImage = XFile(croppedFile.path);
     });
   }
 
@@ -174,13 +134,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           } else if (state.status == RegisterStatus.registered) {
             myAlertBox(
               context,
-              heading: "🎉 You're all set!",
+              heading: "Register Successful🎉",
               subtittle: state.errorMsg,
             );
             setState(() {
               isLoading1 = false;
             });
-            Future.delayed(Duration(seconds: 2), () {
+            Future.delayed(Duration(seconds: 3), () {
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.roleSelectionScreen,
@@ -199,15 +159,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text("Create your command center accont", style: t3White()),
                   SizedBox(height: 15.h),
                   imageHolderWithCamera(
-                    imagePath: _croppedImage,
+                    imagePath: pickedImage,
                     onPressed: () {
                       showImagePickerAlert(
                         context: context,
-                        onCameraTap: () {
-                          pickAndCropImage(ImageSource.camera);
+                        onCameraTap: () async {
+                          pickImageAndCrop(ImageSource.camera);
                         },
-                        onGalleryTap: () {
-                          pickAndCropImage(ImageSource.gallery);
+                        onGalleryTap: () async {
+                          pickImageAndCrop(ImageSource.gallery);
                         },
                       );
                     },
@@ -278,9 +238,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           email: userEmailController.text.trim(),
                           password: userPasswordController.text.trim(),
                           name: userNameController.text.trim(),
-                          role: selectedMember,
                           confirmPassword: userPasswordConformController.text
                               .trim(),
+                          profileImage: pickedImage,
                         );
                       }
                     },
@@ -483,3 +443,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   //                       : SizedBox.shrink(),
   //                 ),
   //                 isDropdownVisible ? SizedBox(height: 20.h) : Container(),
+
+
+
+  
+  // List<String> memberSelection = ["Chief", "Lead", "Board Member", "Guest"];
+
+  // void onTap() {
+  //   setState(() {
+  //     isDropdownVisible = !isDropdownVisible;
+  //     isSelectedText = true;
+  //   });
+  // }
+
+  // void selected(int index) {
+  //   setState(() {
+  //     selectedIndex = index;
+  //     if (index == 0) {
+  //       setState(() {
+  //         selectedMember = memberSelection[0];
+  //         isDropdownVisible = false;
+  //       });
+  //     } else if (index == 1) {
+  //       setState(() {
+  //         selectedMember = memberSelection[1];
+  //         isDropdownVisible = false;
+  //       });
+  //     } else if (index == 2) {
+  //       setState(() {
+  //         selectedMember = memberSelection[2];
+  //         isDropdownVisible = false;
+  //       });
+  //     } else if (index == 3) {
+  //       setState(() {
+  //         selectedMember = memberSelection[3];
+  //         isDropdownVisible = false;
+  //       });
+  //     }
+  //   });
+  // }
+
+  // int? selectedIndex;
+  // bool isSelectedText = false;

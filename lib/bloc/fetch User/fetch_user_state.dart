@@ -21,6 +21,7 @@ class FetchUserState extends Equatable {
   final String? role;
   final String? email;
   final String? name;
+  final String? imagePath;
   final String? uid;
   final List<AllUserInfo>? userInfo;
   const FetchUserState({
@@ -28,6 +29,7 @@ class FetchUserState extends Equatable {
     this.errorMsg,
     this.role,
     this.email,
+    this.imagePath,
     this.name,
     this.userInfo,
     this.uid,
@@ -39,6 +41,7 @@ class FetchUserState extends Equatable {
     String? role,
     String? email,
     String? name,
+    String? imagePath,
     List<AllUserInfo>? userInfo,
     final String? uid,
   }) {
@@ -50,6 +53,7 @@ class FetchUserState extends Equatable {
       name: name ?? this.name,
       userInfo: userInfo ?? this.userInfo,
       uid: uid ?? this.uid,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 
@@ -62,6 +66,7 @@ class FetchUserState extends Equatable {
     name,
     userInfo,
     uid,
+    imagePath,
   ];
 }
 

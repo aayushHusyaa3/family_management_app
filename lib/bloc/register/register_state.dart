@@ -5,21 +5,31 @@ enum RegisterStatus {
   registering,
   registered,
   registerFailure,
+
+  updating,
+  updated,
+  updatingFailure,
 }
 
 class RegisterState extends Equatable {
   final RegisterStatus? status;
   final String? errorMsg;
+  final String? uid;
 
-  const RegisterState({this.errorMsg, this.status});
+  const RegisterState({this.errorMsg, this.status, this.uid});
 
-  RegisterState copyWith({RegisterStatus? status, String? errorMsg}) {
+  RegisterState copyWith({
+    RegisterStatus? status,
+    String? errorMsg,
+    String? uid,
+  }) {
     return RegisterState(
       errorMsg: errorMsg ?? this.errorMsg,
+      uid: uid ?? this.uid,
       status: status ?? this.status,
     );
   }
 
   @override
-  List<Object?> get props => [status, errorMsg];
+  List<Object?> get props => [status, errorMsg, uid];
 }

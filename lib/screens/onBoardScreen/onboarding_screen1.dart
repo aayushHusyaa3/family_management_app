@@ -25,16 +25,22 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 30.h),
-              Text(
-                "Run your home like\na boardroom",
-                style: t1heading(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  "Run your home like a boardroom",
+                  style: t1heading(),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
               ),
               SizedBox(height: 10.h),
-              Text(
-                "Organize tasks, coordinate schedules,\nand manage your family operations with\nexecutive-level efficiency",
-                style: t2White(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  "Organize tasks, coordinate schedules,and manage your family operations with executive-level efficiency",
+                  style: t2White(),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
               ),
               Spacer(),
 

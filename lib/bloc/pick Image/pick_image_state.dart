@@ -1,34 +1,35 @@
-// part of 'pick_image_cubit.dart';
+part of 'pick_image_cubit.dart';
 
-// enum PickingState {
-//   initPicking,
-//   picked,
-//   pickedPlus,
-//   uploaded,
-//   uploading,
-//   uploadingFailure,
-//   imageDeleted,
-// }
+enum PickingState {
+  initalPicking,
+  picking,
+  picked,
+  pickingFailed,
 
-// class PickImageState extends Equatable {
-//   final XFile? pickedFile;
-//   final PickingState? pickingState;
-//   final String? errorMsg;
+  uploading,
+  uploaded,
+  uploadingFailure,
+}
 
-//   const PickImageState({this.pickedFile, this.pickingState, this.errorMsg});
+class PickImageState extends Equatable {
+  final XFile? pickedFile;
+  final PickingState? pickingState;
+  final String? errorMsg;
 
-//   PickImageState copyWith({
-//     XFile? pickedFile,
-//     PickingState? pickingState,
-//     String? errorMsg,
-//   }) {
-//     return PickImageState(
-//       pickedFile: pickedFile ?? this.pickedFile,
-//       pickingState: pickingState ?? this.pickingState,
-//       errorMsg: errorMsg ?? this.errorMsg,
-//     );
-//   }
+  const PickImageState({this.pickedFile, this.pickingState, this.errorMsg});
 
-//   @override
-//   List<Object?> get props => [pickedFile, pickingState, errorMsg];
-// }
+  PickImageState copyWith({
+    XFile? pickedFile,
+    PickingState? pickingState,
+    String? errorMsg,
+  }) {
+    return PickImageState(
+      pickedFile: pickedFile ?? this.pickedFile,
+      pickingState: pickingState ?? this.pickingState,
+      errorMsg: errorMsg ?? this.errorMsg,
+    );
+  }
+
+  @override
+  List<Object?> get props => [pickedFile, pickingState, errorMsg];
+}

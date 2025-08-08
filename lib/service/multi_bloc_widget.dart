@@ -2,6 +2,7 @@ import 'package:family_management_app/bloc/add%20tasks/add_tasks_cubit.dart';
 import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:family_management_app/bloc/fetch_tasks/fetch_tasks_cubit.dart';
 import 'package:family_management_app/bloc/login/login_cubit.dart';
+import 'package:family_management_app/bloc/pick%20Image/pick_image_cubit.dart';
 import 'package:family_management_app/bloc/register/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

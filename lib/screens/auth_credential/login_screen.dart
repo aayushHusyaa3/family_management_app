@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
@@ -52,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColor.background,
       body: BlocListener<LoginCubit, LoginState>(
-        listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
           if (state.status == LoginStatus.logging) {
             setState(() {
