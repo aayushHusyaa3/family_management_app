@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? savedRole;
   String? secureRole;
   String? imageUrl;
+  String? name;
 
   @override
   void initState() {
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Row(
             children: [
-              MyProfileHolder(imagePath: imageUrl, height: 40),
+              MyProfileHolder(imagePath: imageUrl, name: name, height: 40),
               SizedBox(width: 10.w),
               secureRole == "Chief" || secureRole == "Lead"
                   ? GestureDetector(
@@ -141,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           savedRole = state.role ?? "Guest";
                           imageUrl = state.imagePath;
+                          name = state.name ?? "";
                         });
                         final role = state.role;
                         final uid = state.uid;

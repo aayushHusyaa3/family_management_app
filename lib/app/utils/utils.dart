@@ -9,19 +9,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MyButtton extends StatefulWidget {
   final bool isLoading;
   final String text;
   final VoidCallback onPressed;
+  final Color buttonColor;
 
   const MyButtton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.buttonColor = AppColor.secondary,
   });
 
   @override
@@ -38,7 +39,7 @@ class _MyButttonState extends State<MyButtton> {
         width: double.infinity,
         height: 65.h,
         decoration: BoxDecoration(
-          color: AppColor.secondary,
+          color: widget.buttonColor,
           borderRadius: BorderRadius.circular(35.r),
         ),
         child: widget.isLoading
@@ -139,6 +140,7 @@ class MyTextField extends StatelessWidget {
 
 class MyProfileHolder extends StatelessWidget {
   final String? imagePath;
+  final String? name;
   final int width;
   final int height;
   const MyProfileHolder({
@@ -146,24 +148,43 @@ class MyProfileHolder extends StatelessWidget {
     this.imagePath,
     this.width = 35,
     this.height = 35,
+    this.name,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = imagePath != null && imagePath!.isNotEmpty;
     return Container(
       width: width.w,
       height: height.h,
       decoration: BoxDecoration(
         border: BoxBorder.all(width: 1, color: AppColor.secondary),
-        image: DecorationImage(
-          image: imagePath != null
-              ? NetworkImage(imagePath!)
-              : AssetImage(AppImages.profilePlaceholder),
-          fit: BoxFit.cover,
-        ),
+        image: hasImage
+            ? DecorationImage(
+                image: imagePath != null
+                    ? NetworkImage(imagePath!)
+                    : AssetImage(AppImages.profilePlaceholder),
+                fit: BoxFit.cover,
+              )
+            : null,
+        color: hasImage ? null : const Color.fromARGB(255, 33, 78, 155),
 
         shape: BoxShape.circle,
       ),
+      child: !hasImage
+          ? Center(
+              child: Text(
+                (name != null && name!.isNotEmpty)
+                    ? name![0].toUpperCase()
+                    : '?',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
@@ -226,6 +247,7 @@ class MyTaskHolderBox extends StatelessWidget {
 void myAlertBox(
   BuildContext context, {
   String heading = "Sign In Failed",
+
   required subtittle,
 }) async {
   return showDialog(
@@ -287,9 +309,12 @@ void mySnackBar(BuildContext context, {required String title}) {
     ..showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColor.border,
+        backgroundColor: AppColor.dropDownColor,
         duration: Duration(seconds: 2),
-        content: Text(title, style: t3()),
+        content: Text(
+          title,
+          style: t3().copyWith(color: AppColor.textSecondary),
+        ),
       ),
     );
 }
@@ -603,6 +628,10 @@ class MyUploadTextField extends StatelessWidget {
   final bool isDateandTime;
   final bool isExpanded;
   final bool isRequired;
+  final bool isNumberKeyboard;
+  final Color backIconcolor;
+
+  final ValueChanged<String>? onChangedValue;
   const MyUploadTextField({
     super.key,
     required this.userController,
@@ -614,6 +643,9 @@ class MyUploadTextField extends StatelessWidget {
     this.isDateandTime = false,
     this.isExpanded = true,
     this.isRequired = true,
+    this.isNumberKeyboard = false,
+    this.onChangedValue,
+    this.backIconcolor = AppColor.secondary,
   });
   @override
   Widget build(BuildContext context) {
@@ -640,7 +672,12 @@ class MyUploadTextField extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             TextField(
-              keyboardType: isDateandTime ? TextInputType.datetime : null,
+              onChanged: onChangedValue,
+              keyboardType: isDateandTime
+                  ? TextInputType.datetime
+                  : isNumberKeyboard
+                  ? TextInputType.numberWithOptions()
+                  : null,
               maxLines: isDesc ? 3 : 1,
               controller: userController,
               textAlignVertical: TextAlignVertical.center,
@@ -653,7 +690,7 @@ class MyUploadTextField extends StatelessWidget {
                 filled: true,
                 fillColor: AppColor.secondary.withAlpha(10),
                 suffixIcon: backIcon != null
-                    ? Icon(backIcon, color: AppColor.secondary)
+                    ? Icon(backIcon, color: backIconcolor)
                     : null,
                 prefixIcon: frontIcon != null
                     ? Padding(
@@ -1151,4 +1188,36 @@ void showCustomBoardModalBottomSheet(
       ),
     ),
   );
+}
+
+class MyAcceptButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final Color textColor;
+
+  const MyAcceptButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.textColor = AppColor.dropDownColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 7.w),
+
+        decoration: BoxDecoration(
+          color: AppColor.secondary,
+          borderRadius: BorderRadius.circular(7.r),
+        ),
+        child: Text(
+          text,
+          style: hintTextStyle().copyWith(fontSize: 15.sp, color: textColor),
+        ),
+      ),
+    );
+  }
 }

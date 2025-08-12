@@ -18,6 +18,9 @@ class AppRoutes {
   static const settingScreen = '/SettingsScreen';
   static const addTasksScreen = '/AddTasksScreens';
   static const addEventsScreen = '/AddEventsScreen';
-  static const roleSelectionScreen = '/RoleSelectionScreen';
   static const waitingScreen = '/WaitingScreen';
+  static const acceptedScreen = '/AcceptedScreen';
+  static const rejectedScreen = '/RejectedScreen';
+  static const roleSelectionScreen = '/RoleSelectionScreen';
+  static const notificationShowerScreen = '/NotificationShowerScreen';
 }

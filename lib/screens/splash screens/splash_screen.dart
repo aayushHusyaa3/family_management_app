@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
@@ -18,13 +19,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
+
   late Animation<double> tweenController;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    checkFlowAndNavigate(context);
+    _handleSplashNavigation(context);
     animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 2500),
@@ -42,21 +44,70 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  Future<void> checkFlowAndNavigate(context) async {
+  Future<void> _handleSplashNavigation(context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     bool isFirstInstall = pref.getBool("isFirstInstall") ?? true;
     User? user = auth.currentUser;
-    Future.delayed(Duration(seconds: 2), () {
-      if (isFirstInstall) {
-        Navigator.pushReplacementNamed(context, AppRoutes.splashScreen1);
-      } else {
-        if (user != null && user.uid.isNotEmpty) {
-          Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (isFirstInstall) {
+      Navigator.pushReplacementNamed(context, AppRoutes.splashScreen1);
+      return;
+    }
+
+    if (user == null || user.uid.isEmpty) {
+      Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+      return;
+    }
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final role = userDoc.data()?['role'];
+    final joinStatus = userDoc.data()?['joinStatus'];
+    final wasApprovedShown = userDoc.data()?['wasApprovedShown'] ?? false;
+
+    if (role == 'Chief') {
+      Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
+      return;
+    }
+    if (role == null) {
+      Navigator.pushReplacementNamed(context, AppRoutes.roleSelectionScreen);
+      return;
+    }
+
+    // For members, check joinStatus
+    switch (joinStatus) {
+      case 'pending':
+        // Navigator.pushReplacementNamed(context, AppRoutes.waitingScreen);
+        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+        break;
+      case 'accepted':
+        if (!wasApprovedShown) {
+          Navigator.pushReplacementNamed(context, AppRoutes.acceptedScreen);
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({"wasApprovedShown": true});
         } else {
-          Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+          if (user.uid.isNotEmpty) {
+            Navigator.pushNamed(context, AppRoutes.navigationScreen);
+          } else {
+            Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+          }
         }
-      }
-    });
+        break;
+      case 'rejected':
+        Navigator.pushReplacementNamed(context, AppRoutes.rejectedScreen);
+        break;
+      default:
+        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+        break;
+    }
   }
 
   @override

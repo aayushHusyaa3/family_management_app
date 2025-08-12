@@ -14,4 +14,5 @@ class AppColor {
   static const Color warning = Color(0xFFFF9800);
   static const Color error = Color(0xFFF44336);
   static const Color dropDownColor = Color(0xFF152A4F);
+  static const Color dropDownAlternativeColor = Color(0xFF214E9B);
 }

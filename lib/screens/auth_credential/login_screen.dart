@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/utils.dart';
 import 'package:family_management_app/bloc/login/login_cubit.dart';
+import 'package:family_management_app/screens/auth_credential/role_selection_screen.dart';
+import 'package:family_management_app/service/notification_service.dart';
+import 'package:family_management_app/service/secure_storage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,6 +135,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         context,
                         AppRoutes.registerScreen,
                       );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => RoleSelectionScreen(
+                      //       uid: "GvOVyXRakFXEVyuq9XwiZ3HSE6f1",
+                      //     ),
+                      //   ),
+                      // );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -4,6 +4,7 @@ import 'package:family_management_app/bloc/fetch_tasks/fetch_tasks_cubit.dart';
 import 'package:family_management_app/bloc/login/login_cubit.dart';
 import 'package:family_management_app/bloc/pick%20Image/pick_image_cubit.dart';
 import 'package:family_management_app/bloc/register/register_cubit.dart';
+import 'package:family_management_app/bloc/role_update/role_update_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +21,7 @@ class MultiBlocWidget extends StatelessWidget {
         BlocProvider(create: (context) => FetchUserCubit()..getUserRole()),
         BlocProvider(create: (context) => FetchTasksCubit()),
         BlocProvider(create: (context) => AddTasksCubit()),
-        // BlocProvider(create: (context) => PickImageCubit()),
+        BlocProvider(create: (context) => RoleUpdateCubit()),
       ],
       child: child,
     );

@@ -1,10 +1,11 @@
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:family_management_app/app/api/firebaseauth_Exception.dart';
 import 'package:family_management_app/service/secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -12,6 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> login({required String email, required String password}) async {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    String? freshToken = await FirebaseMessaging.instance.getToken();
 
     emit(
       state.copyWith(
@@ -30,12 +32,21 @@ class LoginCubit extends Cubit<LoginState> {
           .collection('users')
           .doc(user?.uid)
           .get();
-      // final savedRole = userDoc.data()?['role'] as String?;
+
+      if (userDoc.data()?['role'] == null) {
+        emit(
+          state.copyWith(
+            status: LoginStatus.loginFailure,
+            errorMsg: "You are not assigned a role yet.",
+          ),
+        );
+        return;
+      }
+
       final savedName = userDoc.data()?['name'] as String?;
       final savedEmail = userDoc.data()?['email'] as String?;
       final savedUid = user?.uid;
 
-      // await SecureStorage.save(key: "role", data: savedRole!);
       await SecureStorage.save(key: "email", data: savedEmail!);
       await SecureStorage.save(key: "name", data: savedName!);
       await SecureStorage.save(key: "uid", data: savedUid!);
@@ -46,6 +57,13 @@ class LoginCubit extends Cubit<LoginState> {
           errorMsg: "Logged in successfully",
         ),
       );
+      if (freshToken != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user?.uid)
+            .update({'fcmToken': freshToken});
+      }
+      log(freshToken ?? "");
     } on FirebaseAuthException catch (exe) {
       final errorMessage = FirebaseAuthErrorHandler.getMessage(exe);
 

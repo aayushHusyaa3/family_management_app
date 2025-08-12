@@ -1,8 +1,10 @@
 import 'package:family_management_app/app/routes/app_routes.dart';
+import 'package:family_management_app/screens/auth_credential/join_status_screen.dart/acceptedstatus_screen.dart';
+import 'package:family_management_app/screens/auth_credential/join_status_screen.dart/rejectedstatus_screen.dart';
 import 'package:family_management_app/screens/auth_credential/login_screen.dart';
 import 'package:family_management_app/screens/auth_credential/register_screen.dart';
 import 'package:family_management_app/screens/auth_credential/role_selection_screen.dart';
-import 'package:family_management_app/screens/auth_credential/waiting_screen.dart';
+import 'package:family_management_app/screens/auth_credential/join_status_screen.dart/waiting_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/calender_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/home_screen.dart';
 import 'package:family_management_app/screens/bottom_tabs.dart/kids_screen.dart';
@@ -14,6 +16,7 @@ import 'package:family_management_app/screens/drawer_navigation/command_center.d
 import 'package:family_management_app/screens/drawer_navigation/shopping.dart';
 import 'package:family_management_app/screens/functionality/addevents_screen.dart';
 import 'package:family_management_app/screens/functionality/addtask_screen.dart';
+import 'package:family_management_app/screens/more_options/notification_shower.dart';
 
 import 'package:family_management_app/screens/onBoardScreen/onboarding_Screen1.dart';
 import 'package:family_management_app/screens/onBoardScreen/onboarding_screen.dart';
@@ -63,6 +66,10 @@ class AppRouter {
       return transtionTo(LoginScreen());
     } else if (settings.name == AppRoutes.registerScreen) {
       return transtionTo(RegisterScreen());
+    } else if (settings.name == AppRoutes.roleSelectionScreen) {
+      return transtionTo(
+        RoleSelectionScreen(uid: settings.arguments as String?),
+      );
     } else if (settings.name == AppRoutes.navigationScreen) {
       return transtionTo(NavigationScreens());
     } else if (settings.name == AppRoutes.homeScreen) {
@@ -87,10 +94,14 @@ class AppRouter {
       return transtionTo(AddtaskScreen());
     } else if (settings.name == AppRoutes.addEventsScreen) {
       return transtionTo(AddEventsScreen());
-    } else if (settings.name == AppRoutes.roleSelectionScreen) {
-      return transtionTo(RoleSelectionScreen());
     } else if (settings.name == AppRoutes.waitingScreen) {
       return transtionTo(WaitingScreen());
+    } else if (settings.name == AppRoutes.acceptedScreen) {
+      return transtionTo(AcceptedstatusScreen());
+    } else if (settings.name == AppRoutes.rejectedScreen) {
+      return transtionTo(RejectedstatusScreen());
+    } else if (settings.name == AppRoutes.notificationShowerScreen) {
+      return transtionTo(NotificationShowerScreen());
     } else {
       return transtionTo(SplashScreen());
     }

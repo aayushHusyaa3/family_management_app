@@ -3,6 +3,7 @@ import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
 import 'package:family_management_app/app/utils/utils.dart';
 import 'package:family_management_app/bloc/register/register_cubit.dart';
+import 'package:family_management_app/screens/auth_credential/role_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? passwordError;
   String? confirmPasswordError;
   String? errorName;
+  String? uid;
 
   Future<void> pickImageAndCrop(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
@@ -113,6 +115,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  void dispose() {
+    userEmailController.dispose();
+    userPasswordController.dispose();
+    userPasswordConformController.dispose();
+    userNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background,
@@ -139,13 +150,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
             );
             setState(() {
               isLoading1 = false;
+              uid = state.uid;
             });
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.pushReplacementNamed(
+            if (uid != null && uid!.isNotEmpty) {
+              Future.delayed(Duration(seconds: 3), () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoleSelectionScreen(uid: uid!),
+                  ),
+                );
+              });
+            } else {
+              myAlertBox(
                 context,
-                AppRoutes.roleSelectionScreen,
+                heading: "Error",
+                subtittle: "Could not retrieve user ID. Please try again.",
               );
-            });
+            }
           }
         },
         child: Center(
@@ -175,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   MyTextField(
                     userController: userNameController,
                     hint: "Name ",
-                    frontIcon: Icons.email_outlined,
+                    frontIcon: Icons.perm_identity_outlined,
                     isHide: false,
                     errorMsg: errorName,
                     onPasswordIconClicked: () {},
@@ -250,7 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onTap: () {
                       Navigator.pushReplacementNamed(
                         context,
-                        AppRoutes.roleSelectionScreen,
+                        AppRoutes.loginScreen,
                       );
                     },
                     child: Row(

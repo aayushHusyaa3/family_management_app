@@ -23,7 +23,14 @@ class FetchUserState extends Equatable {
   final String? name;
   final String? imagePath;
   final String? uid;
+  final int? itemCount;
+  final List<Map<String, dynamic>>? joinRequestList;
   final List<AllUserInfo>? userInfo;
+  final String? boardId;
+  final String? rejectedEmail;
+  final String? acceptedEmail;
+  final String? roleStatus;
+  final int? pendingCount;
   const FetchUserState({
     required this.status,
     this.errorMsg,
@@ -33,6 +40,13 @@ class FetchUserState extends Equatable {
     this.name,
     this.userInfo,
     this.uid,
+    this.joinRequestList,
+    this.itemCount,
+    this.boardId,
+    this.rejectedEmail,
+    this.acceptedEmail,
+    this.roleStatus,
+    this.pendingCount,
   });
 
   FetchUserState copyWith({
@@ -43,7 +57,14 @@ class FetchUserState extends Equatable {
     String? name,
     String? imagePath,
     List<AllUserInfo>? userInfo,
-    final String? uid,
+    String? uid,
+    int? itemCount,
+    List<Map<String, dynamic>>? joinRequestList,
+    String? boardId,
+    String? rejectedEmail,
+    String? acceptedEmail,
+    String? roleStatus,
+    int? pendingCount,
   }) {
     return FetchUserState(
       status: status ?? this.status,
@@ -54,6 +75,13 @@ class FetchUserState extends Equatable {
       userInfo: userInfo ?? this.userInfo,
       uid: uid ?? this.uid,
       imagePath: imagePath ?? this.imagePath,
+      joinRequestList: joinRequestList ?? this.joinRequestList,
+      itemCount: itemCount ?? this.itemCount,
+      boardId: boardId ?? this.boardId,
+      rejectedEmail: rejectedEmail ?? this.rejectedEmail,
+      acceptedEmail: acceptedEmail ?? this.acceptedEmail,
+      roleStatus: roleStatus ?? this.roleStatus,
+      pendingCount: pendingCount ?? this.pendingCount,
     );
   }
 
@@ -67,6 +95,13 @@ class FetchUserState extends Equatable {
     userInfo,
     uid,
     imagePath,
+    joinRequestList,
+    itemCount,
+    boardId,
+    rejectedEmail,
+    acceptedEmail,
+    roleStatus,
+    pendingCount,
   ];
 }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:family_management_app/service/secure_storage.dart';
@@ -17,6 +19,7 @@ class MoreScreen extends StatefulWidget {
 }
 
 class _MoreScreenState extends State<MoreScreen> {
+  int notificationCount = -1;
   List<IconData> iconsList = [
     Icons.security, // Security
     Icons.notifications, // Notifications
@@ -54,6 +57,11 @@ class _MoreScreenState extends State<MoreScreen> {
     {'title': 'Help & Support', 'subtitle': 'Get help and contact support'},
     {'title': 'Sign Out', 'subtitle': 'Sign out of your account'},
   ];
+  @override
+  void initState() {
+    super.initState();
+    context.read<FetchUserCubit>().fetchJoinRequests();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +89,38 @@ class _MoreScreenState extends State<MoreScreen> {
               return Padding(
                 padding: EdgeInsetsGeometry.only(bottom: 15.h),
                 child: GestureDetector(
-                  onTap: index == 8
-                      ? () async {
-                          bloc.logOut();
-                          await SecureStorage.deleteAll();
-                        }
-                      : () {},
+                  onTap: () async {
+                    if (index == 0) {
+                      log('Tapped on item 0');
+                    } else if (index == 1) {
+                      bloc.resetNotificationCount();
+                      setState(() {
+                        notificationCount = -1; // Reset notification count
+                      });
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.notificationShowerScreen,
+                      );
+                      log('Tapped on item 1');
+                    } else if (index == 2) {
+                      log('Tapped on item 2');
+                    } else if (index == 3) {
+                      log('Tapped on item 3');
+                    } else if (index == 4) {
+                      log('Tapped on item 4');
+                    } else if (index == 5) {
+                      log('Tapped on item 5');
+                    } else if (index == 6) {
+                      log('Tapped on item 6');
+                    } else if (index == 7) {
+                      log('Tapped on item 7');
+                    } else if (index == 8) {
+                      bloc.logOut();
+                      await SecureStorage.deleteAll();
+                    } else {
+                      log('Tapped on other item');
+                    }
+                  },
                   child: myTextHolderContainer(
                     borderColor: index == 8
                         ? AppColor.error
@@ -95,9 +129,21 @@ class _MoreScreenState extends State<MoreScreen> {
                     child: BlocListener<FetchUserCubit, FetchUserState>(
                       listener: (context, state) {
                         if (state.status == FetchUserStatus.loggedOut) {
-                          Navigator.pushNamed(context, AppRoutes.loginScreen);
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            AppRoutes.loginScreen,
+                            (route) => false,
+                          );
+                          SecureStorage.deleteAll();
+
                           mySnackBar(context, title: "log out Successfully");
-                        } else if (state.status == FetchUserStatus.logouting) {}
+                        } else if (state.status == FetchUserStatus.fetched) {
+                          if (notificationCount != 0) {
+                            setState(() {
+                              notificationCount = state.pendingCount ?? 0;
+                            });
+                          }
+                        }
                       },
                       child: GestureDetector(
                         child: Row(
@@ -151,6 +197,29 @@ class _MoreScreenState extends State<MoreScreen> {
                                 );
                               },
                             ),
+                            Spacer(),
+                            index == 1
+                                ? notificationCount > 0
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColor.error,
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8.r),
+                                            child: Text(
+                                              "$notificationCount",
+                                              style: hintTextStyle().copyWith(
+                                                color: AppColor.textSecondary,
+                                                fontSize: 18.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox()
+                                : SizedBox(),
                           ],
                         ),
                       ),
