@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:family_management_app/app/api/firebaseauth_Exception.dart';
 import 'package:family_management_app/service/notification_service.dart';
+import 'package:family_management_app/service/secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 part 'role_update_state.dart';
@@ -46,6 +47,8 @@ class RoleUpdateCubit extends Cubit<RoleUpdateState> {
       final savedBoardId = doc.data()?['boardId'];
       final savedTitle = doc.data()?['title'];
       final savedDescription = doc.data()?['description'];
+      await SecureStorage.save(key: "role", data: "Chief");
+      await SecureStorage.save(key: "boardId", data: savedBoardId);
 
       emit(
         state.copyWith(

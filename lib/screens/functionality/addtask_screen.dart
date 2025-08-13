@@ -174,13 +174,27 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                         child: myShimmerBox(width: double.infinity, height: 57),
                       );
                     }
+
+                    // If no users, show dropdown with a disabled item
+                    if (personSelectionList.isEmpty) {
+                      return MyDropDownMemberBUtton(
+                        labelText: "Select team member to assign task",
+                        selectedEmail: null,
+                        itemsList: const [],
+                        icon: Icons.person,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMember = null;
+                          });
+                        }, // disables the dropdown
+                        hintText: "No user assigned yet",
+                      );
+                    }
+
                     return MyDropDownMemberBUtton(
                       labelText: "Select team member to assign task",
-                      selectedEmail: personSelectionList.isNotEmpty
-                          ? personSelectionList.last.email
-                          : null,
+                      selectedEmail: personSelectionList.last.email,
                       itemsList: personSelectionList,
-
                       icon: Icons.person,
                       onChanged: (value) {
                         setState(() {

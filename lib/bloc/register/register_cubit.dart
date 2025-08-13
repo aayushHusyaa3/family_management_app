@@ -36,6 +36,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
       if (profileImage != null) {
         imagePath = await uploadProfileImage(profileImage);
+        await SecureStorage.save(key: "imagePath", data: imagePath);
       } else {
         imagePath = "";
       }

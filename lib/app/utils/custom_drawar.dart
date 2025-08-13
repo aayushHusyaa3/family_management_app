@@ -17,26 +17,33 @@ class MyCustomDrawar extends StatefulWidget {
 }
 
 class _MyCustomDrawarState extends State<MyCustomDrawar> {
-  String? role;
-  String? secureRole;
-  String? name;
+  String? savedUserRole;
+  String? savedUserName;
+  String? savedUserImage;
+  String? savedUserEmail;
 
   @override
   void initState() {
     super.initState();
-    context.read<FetchUserCubit>().getUserRole();
+
     getSecureData();
   }
 
   Future<void> getSecureData() async {
-    final role = await SecureStorage.read(key: "role");
+    final userRole = await SecureStorage.read(key: "savedRole");
+    final userName = await SecureStorage.read(key: "name");
+    final userImage = await SecureStorage.read(key: "imagePath");
+    final useremail = await SecureStorage.read(key: "email");
     setState(() {
-      secureRole = role ?? "Guest";
+      savedUserRole = userRole;
+      savedUserName = userName;
+      savedUserImage = userImage;
+      savedUserEmail = useremail;
     });
   }
 
   Map<String, List> getIcon(BuildContext context) {
-    if (role == "Chief" || role == "Lead") {
+    if (savedUserRole == "Chief" || savedUserRole == "Lead") {
       return {
         "icons": [
           Icons.home,
@@ -78,7 +85,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
           },
         ],
       };
-    } else if (role == "Board Member") {
+    } else if (savedUserRole == "Board Member") {
       return {
         "icons": [
           Icons.home,
@@ -144,14 +151,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 70.h, horizontal: 30.w),
         child: BlocConsumer<FetchUserCubit, FetchUserState>(
-          listener: (context, state) {
-            if (state.status == FetchUserStatus.fetched) {
-              setState(() {
-                role = state.role ?? "Board Member";
-                name = state.name ?? "User";
-              });
-            }
-          },
+          listener: (context, state) {},
           builder: (context, state) {
             if (state.status == FetchUserStatus.fetching) {
               return myTasksShimmerBox(
@@ -169,14 +169,14 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                     MyProfileHolder(
                       width: 70,
                       height: 70,
-                      imagePath: AppImages.mainLogo,
+                      imagePath: savedUserImage ?? AppImages.profilePlaceholder,
                     ),
                     SizedBox(width: 15.sp),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          name ?? "User",
+                          savedUserName ?? "User",
                           style: t1heading().copyWith(fontSize: 20.sp),
                         ),
                         Text(
@@ -189,7 +189,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                 ),
                 profileInfoROw(
                   icon: Icons.email,
-                  text: state.email!,
+                  text: savedUserEmail ?? "Email not set",
                   onPressed: () {},
                 ),
                 Divider(thickness: 1, color: AppColor.secondary),

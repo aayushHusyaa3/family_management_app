@@ -45,11 +45,13 @@ class LoginCubit extends Cubit<LoginState> {
 
       final savedName = userDoc.data()?['name'] as String?;
       final savedEmail = userDoc.data()?['email'] as String?;
+      final savedRole = userDoc.data()?['role'] as String?;
       final savedUid = user?.uid;
 
       await SecureStorage.save(key: "email", data: savedEmail!);
       await SecureStorage.save(key: "name", data: savedName!);
       await SecureStorage.save(key: "uid", data: savedUid!);
+       await SecureStorage.save(key: "savedRole", data: savedRole!);
 
       emit(
         state.copyWith(

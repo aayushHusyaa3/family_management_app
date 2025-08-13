@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:family_management_app/service/secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 part 'fetch_user_state.dart';
@@ -235,6 +236,7 @@ class FetchUserCubit extends Cubit<FetchUserState> {
             "joinStatus": 'accepted',
           });
       await fetchJoinRequests();
+      await SecureStorage.save(key: "role", data: role);
 
       final joinRequestDoc = await firestore
           .collection('board')

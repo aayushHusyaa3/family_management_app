@@ -514,6 +514,7 @@ class MyDropDownMemberBUtton extends StatefulWidget {
   final String labelText;
   final ValueChanged<String?> onChanged;
   final IconData? backIcon;
+  final String hintText;
 
   const MyDropDownMemberBUtton({
     super.key,
@@ -523,6 +524,7 @@ class MyDropDownMemberBUtton extends StatefulWidget {
     this.selectedEmail,
     this.backIcon,
     required this.onChanged,
+    this.hintText = "Aayush - (aaysuhhsuyaa3@gmail.com)",
   });
 
   @override
@@ -552,7 +554,7 @@ class _MyDropDownMemberBUttonState extends State<MyDropDownMemberBUtton> {
             hint: Text(
               overflow: TextOverflow.ellipsis,
 
-              "Aayush - (aaysuhhsuyaa3@gmail.com)",
+              widget.hintText,
               style: hintTextStyle().copyWith(fontSize: 20.sp),
             ),
             style: hintTextStyle().copyWith(
@@ -564,7 +566,9 @@ class _MyDropDownMemberBUttonState extends State<MyDropDownMemberBUtton> {
 
             dropdownColor: AppColor.dropDownColor,
             borderRadius: BorderRadius.circular(15.r),
-            icon: Icon(Icons.arrow_drop_down_sharp, color: AppColor.secondary),
+            icon: widget.itemsList.isEmpty
+                ? SizedBox()
+                : Icon(Icons.arrow_drop_down_sharp, color: AppColor.secondary),
             decoration: InputDecoration(
               fillColor: AppColor.secondary.withAlpha(10),
               filled: true,

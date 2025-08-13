@@ -4,6 +4,7 @@ import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
+import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     _handleSplashNavigation(context);
     animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 2500),
+      duration: Duration(milliseconds: 1000),
     );
     tweenController = Tween<double>(
       begin: 0,
@@ -49,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
     bool isFirstInstall = pref.getBool("isFirstInstall") ?? true;
     User? user = auth.currentUser;
 
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (isFirstInstall) {
       Navigator.pushReplacementNamed(context, AppRoutes.splashScreen1);
@@ -61,29 +62,29 @@ class _SplashScreenState extends State<SplashScreen>
       return;
     }
 
+    // Only after login, check Firestore for role and status
     final userDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .get();
 
-    final role = userDoc.data()?['role'];
     final joinStatus = userDoc.data()?['joinStatus'];
     final wasApprovedShown = userDoc.data()?['wasApprovedShown'] ?? false;
+    final role = userDoc.data()?['role'] ?? 'Member';
 
-    if (role == 'Chief') {
-      Navigator.pushReplacementNamed(context, AppRoutes.navigationScreen);
+    // Now check for Chief role after login
+    if (role == "Chief" && user.uid.isNotEmpty) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.navigationScreen,
+        (route) => false,
+      );
       return;
     }
-    if (role == null) {
-      Navigator.pushReplacementNamed(context, AppRoutes.roleSelectionScreen);
-      return;
-    }
 
-    // For members, check joinStatus
     switch (joinStatus) {
       case 'pending':
-        // Navigator.pushReplacementNamed(context, AppRoutes.waitingScreen);
-        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+        Navigator.pushReplacementNamed(context, AppRoutes.waitingScreen);
         break;
       case 'accepted':
         if (!wasApprovedShown) {
@@ -97,15 +98,13 @@ class _SplashScreenState extends State<SplashScreen>
           if (user.uid.isNotEmpty) {
             Navigator.pushNamed(context, AppRoutes.navigationScreen);
           } else {
+            context.read<FetchUserCubit>().getUserRole();
             Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
           }
         }
         break;
       case 'rejected':
         Navigator.pushReplacementNamed(context, AppRoutes.rejectedScreen);
-        break;
-      default:
-        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
         break;
     }
   }

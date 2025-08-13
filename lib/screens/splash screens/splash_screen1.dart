@@ -2,10 +2,8 @@ import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen1 extends StatefulWidget {
   const SplashScreen1({super.key});
@@ -25,7 +23,7 @@ class _SplashScreen1State extends State<SplashScreen1>
     checkFlowAndNavigate(context);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 250.0).animate(_controller);
@@ -40,7 +38,7 @@ class _SplashScreen1State extends State<SplashScreen1>
   }
 
   Future<void> checkFlowAndNavigate(context) async {
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 1), () {
       Navigator.pushReplacementNamed(context, AppRoutes.onBoardingScreen);
     });
   }

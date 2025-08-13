@@ -89,11 +89,7 @@ class _TasksScreenState extends State<TasksScreen> {
       body: BlocListener<FetchUserCubit, FetchUserState>(
         listener: (context, state) {
           if (state.status == FetchUserStatus.fetched) {
-            final email = state.email;
-            context.read<FetchTasksCubit>().fetchTasks(
-              currentRole: secureRole ?? "Guest",
-              email: email ?? "",
-            );
+            context.read<FetchTasksCubit>().fetchTasks();
           }
         },
         child: BlocListener<FetchTasksCubit, FetchTasksState>(
@@ -246,8 +242,6 @@ class _TasksScreenState extends State<TasksScreen> {
                             return GestureDetector(
                               onTap: () {
                                 context.read<FetchTasksCubit>().fetchTasks(
-                                  currentRole: secureRole ?? "Guest",
-                                  email: secureEmail ?? '',
                                   status: index == 0 ? "pending" : "completed",
                                 );
                                 setState(() {

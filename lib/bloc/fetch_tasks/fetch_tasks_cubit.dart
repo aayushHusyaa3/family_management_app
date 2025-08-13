@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:family_management_app/service/secure_storage.dart';
 
 part 'fetch_tasks_state.dart';
 
@@ -10,11 +11,10 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
   FetchTasksCubit()
     : super(FetchTasksState(status: FetchTasksStatus.initialFetching));
 
-  Future<void> fetchTasks({
-    required String currentRole,
-    required String email,
-    String? status,
-  }) async {
+  Future<void> fetchTasks({String? status}) async {
+    String currentRole = await SecureStorage.read(key: "role") ?? "Chief";
+    String email = await SecureStorage.read(key: "email") ?? "";
+
     emit(
       state.copyWith(
         status: FetchTasksStatus.fetching,
@@ -193,11 +193,7 @@ class FetchTasksCubit extends Cubit<FetchTasksState> {
   //   }
   // }
 
-  Future<void> deleteTask({
-    required List<String> taskId,
-    String? currentRole,
-    String? currentUserId,
-  }) async {
+  Future<void> deleteTask({required List<String> taskId}) async {
     emit(
       state.copyWith(
         status: FetchTasksStatus.deleting,

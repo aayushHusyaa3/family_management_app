@@ -21,15 +21,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? taskCount;
   String? urgentCount;
-  String? savedRole;
-  String? secureRole;
-  String? imageUrl;
-  String? name;
+  String? savedUserRole;
+  String? savedUserName;
+  String? savedUserImage;
+  String? pendingCount;
 
   @override
   void initState() {
     super.initState();
-    context.read<FetchUserCubit>().getUserRole();
+    context.read<FetchTasksCubit>().fetchTasks();
+    context.read<FetchUserCubit>().fetchJoinRequests();
+
     getSecureData();
   }
 
@@ -49,10 +51,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getSecureData() async {
-    final role = await SecureStorage.read(key: "savedRole");
+    final userRole = await SecureStorage.read(key: "savedRole");
+    final userName = await SecureStorage.read(key: "name");
+    final userImage = await SecureStorage.read(key: "imagePath");
+    final useremail = await SecureStorage.read(key: "email");
     setState(() {
-      secureRole = role ?? "Guest";
+      savedUserRole = userRole;
+      savedUserName = userName;
+      savedUserImage = userImage;
     });
+    log(
+      "NAME: $userName, ROLE: $userRole, IMAGE: $userImage, EMAIL: $useremail",
+    );
   }
 
   List<IconData> icons = [
@@ -98,9 +108,13 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Row(
             children: [
-              MyProfileHolder(imagePath: imageUrl, name: name, height: 40),
+              MyProfileHolder(
+                imagePath: savedUserImage ?? "",
+                name: savedUserName ?? "",
+                height: 40,
+              ),
               SizedBox(width: 10.w),
-              secureRole == "Chief" || secureRole == "Lead"
+              savedUserRole == "Chief" || savedUserRole == "Lead"
                   ? GestureDetector(
                       onTap: () {
                         showMyAddOptionsAlert(
@@ -137,28 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BlocConsumer<FetchUserCubit, FetchUserState>(
-                    listener: (context, state) {
-                      if (state.status == FetchUserStatus.fetched) {
-                        setState(() {
-                          savedRole = state.role ?? "Guest";
-                          imageUrl = state.imagePath;
-                          name = state.name ?? "";
-                        });
-                        final role = state.role;
-                        final uid = state.uid;
-                        final email = state.email;
-                        log("Role from Cubit: $role");
-                        log("UID from Cubit: $uid");
-
-                        context.read<FetchTasksCubit>().fetchTasks(
-                          currentRole: role ?? "Guest",
-                          email: email ?? "",
-                        );
-                      }
-                    },
+                    listener: (context, state) {},
                     builder: (context, state) {
                       return Text(
-                        "Welcome back, ${getRoleTitle(state.role ?? secureRole!)}",
+                        "Welcome back, ${getRoleTitle(savedUserRole ?? "Guest")}",
                         style: t1heading().copyWith(fontSize: 30.sp),
                       );
                     },
@@ -233,24 +229,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MyTaskHolderBox(
-                        onPressed: () {},
-                        icon: icons[2],
-                        headingText: headings[2],
-                        subtitle: subtitles[2],
-                        feedback: feedbacks[2],
-                      ),
-                      MyTaskHolderBox(
-                        onPressed: () {},
-                        icon: icons[3],
-                        headingText: headings[3],
-                        subtitle: subtitles[3],
-                        feedback: feedbacks[3],
-                      ),
-                    ],
+                  BlocListener<FetchUserCubit, FetchUserState>(
+                    listener: (context, state) {
+                      if (state.status == FetchUserStatus.fetching) {
+                      } else if (state.status == FetchUserStatus.fetched) {
+                        setState(() {
+                          pendingCount = state.pendingCount?.toString() ?? "0";
+                        });
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        MyTaskHolderBox(
+                          onPressed: () {},
+                          icon: icons[2],
+                          headingText: headings[2],
+                          subtitle: subtitles[2],
+                          feedback: feedbacks[2],
+                        ),
+                        MyTaskHolderBox(
+                          onPressed: () {},
+                          icon: icons[3],
+                          headingText: headings[3],
+                          subtitle: pendingCount ?? "0",
+                          feedback: pendingCount == "0"
+                              ? "No new notifications"
+                              : "${pendingCount ?? "0"} requires action",
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20.h),
                   Text(
