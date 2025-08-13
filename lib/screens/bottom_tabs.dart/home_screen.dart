@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getSecureData() async {
-    final role = await SecureStorage.read(key: "role");
+    final role = await SecureStorage.read(key: "savedRole");
     setState(() {
       secureRole = role ?? "Guest";
     });
