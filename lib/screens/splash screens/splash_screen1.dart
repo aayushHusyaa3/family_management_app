@@ -23,7 +23,7 @@ class _SplashScreen1State extends State<SplashScreen1>
     checkFlowAndNavigate(context);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 250.0).animate(_controller);
@@ -38,7 +38,7 @@ class _SplashScreen1State extends State<SplashScreen1>
   }
 
   Future<void> checkFlowAndNavigate(context) async {
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, AppRoutes.onBoardingScreen);
     });
   }

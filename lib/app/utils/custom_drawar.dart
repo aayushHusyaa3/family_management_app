@@ -21,6 +21,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
   String? savedUserName;
   String? savedUserImage;
   String? savedUserEmail;
+  String? savedBoardId;
 
   @override
   void initState() {
@@ -34,11 +35,13 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
     final userName = await SecureStorage.read(key: "name");
     final userImage = await SecureStorage.read(key: "imagePath");
     final useremail = await SecureStorage.read(key: "email");
+    final userBoardId = await SecureStorage.read(key: "boardId");
     setState(() {
       savedUserRole = userRole;
       savedUserName = userName;
       savedUserImage = userImage;
       savedUserEmail = useremail;
+      savedBoardId = userBoardId;
     });
   }
 
@@ -168,8 +171,10 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                   children: [
                     MyProfileHolder(
                       width: 70,
+                      fontSize: 40,
                       height: 70,
-                      imagePath: savedUserImage ?? AppImages.profilePlaceholder,
+                      name: savedUserName ?? "",
+                      imagePath: savedUserImage ?? "",
                     ),
                     SizedBox(width: 15.sp),
                     Column(
@@ -180,8 +185,8 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                           style: t1heading().copyWith(fontSize: 20.sp),
                         ),
                         Text(
-                          state.role!,
-                          style: hintTextStyle().copyWith(fontSize: 20.sp),
+                          "$savedUserRole  [${savedBoardId ?? '15424'}]",
+                          style: hintTextStyle().copyWith(fontSize: 18.sp),
                         ),
                       ],
                     ),
@@ -192,6 +197,7 @@ class _MyCustomDrawarState extends State<MyCustomDrawar> {
                   text: savedUserEmail ?? "Email not set",
                   onPressed: () {},
                 ),
+
                 Divider(thickness: 1, color: AppColor.secondary),
                 SizedBox(height: 10.h),
                 Column(

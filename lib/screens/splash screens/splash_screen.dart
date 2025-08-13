@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     _handleSplashNavigation(context);
     animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1000),
+      duration: Duration(milliseconds: 2000),
     );
     tweenController = Tween<double>(
       begin: 0,
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
     bool isFirstInstall = pref.getBool("isFirstInstall") ?? true;
     User? user = auth.currentUser;
 
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
 
     if (isFirstInstall) {
       Navigator.pushReplacementNamed(context, AppRoutes.splashScreen1);

@@ -18,6 +18,15 @@ class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColor.background,
       automaticallyImplyLeading: false,
+      leading: IconButton(
+        padding: EdgeInsets.zero,
+        icon: Icon(
+          Icons.arrow_back_ios_new,
+          color: AppColor.secondary,
+          size: 20.sp,
+        ),
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
       titleSpacing: 20,
       toolbarHeight: 100.h,
 

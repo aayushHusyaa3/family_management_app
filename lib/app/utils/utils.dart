@@ -143,12 +143,14 @@ class MyProfileHolder extends StatelessWidget {
   final String? name;
   final int width;
   final int height;
+  final int fontSize;
   const MyProfileHolder({
     super.key,
     this.imagePath,
     this.width = 35,
     this.height = 35,
     this.name,
+    this.fontSize = 20,
   });
 
   @override
@@ -177,10 +179,10 @@ class MyProfileHolder extends StatelessWidget {
                 (name != null && name!.isNotEmpty)
                     ? name![0].toUpperCase()
                     : '?',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: fontSize.sp,
                 ),
               ),
             )
