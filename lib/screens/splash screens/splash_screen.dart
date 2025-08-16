@@ -4,7 +4,6 @@ import 'package:family_management_app/app/app%20Color/app_color.dart';
 import 'package:family_management_app/app/images/app_images.dart';
 import 'package:family_management_app/app/routes/app_routes.dart';
 import 'package:family_management_app/app/textStyle/textstyles.dart';
-import 'package:family_management_app/bloc/fetch%20User/fetch_user_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,7 +61,6 @@ class _SplashScreenState extends State<SplashScreen>
       return;
     }
 
-    // Only after login, check Firestore for role and status
     final userDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -70,42 +68,58 @@ class _SplashScreenState extends State<SplashScreen>
 
     final joinStatus = userDoc.data()?['joinStatus'];
     final wasApprovedShown = userDoc.data()?['wasApprovedShown'] ?? false;
+    final wasLoggedin = userDoc.data()?['wasLogin'] ?? false;
     final role = userDoc.data()?['role'] ?? 'Member';
 
-    // Now check for Chief role after login
+    // Chief logic
     if (role == "Chief" && user.uid.isNotEmpty) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.navigationScreen,
-        (route) => false,
-      );
-      return;
+      if (!wasLoggedin) {
+        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+
+        return;
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.navigationScreen,
+          (route) => false,
+        );
+        return;
+      }
     }
 
+    // Member logic
     switch (joinStatus) {
       case 'pending':
         Navigator.pushReplacementNamed(context, AppRoutes.waitingScreen);
-        break;
+        return;
       case 'accepted':
         if (!wasApprovedShown) {
           Navigator.pushReplacementNamed(context, AppRoutes.acceptedScreen);
-
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
               .update({"wasApprovedShown": true});
+          return;
         } else {
-          if (user.uid.isNotEmpty) {
-            Navigator.pushNamed(context, AppRoutes.navigationScreen);
-          } else {
-            context.read<FetchUserCubit>().getUserRole();
+          if (!wasLoggedin) {
             Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+
+            return;
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.navigationScreen,
+              (route) => false,
+            );
+            return;
           }
         }
-        break;
       case 'rejected':
         Navigator.pushReplacementNamed(context, AppRoutes.rejectedScreen);
-        break;
+        return;
+      default:
+        Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+        return;
     }
   }
 

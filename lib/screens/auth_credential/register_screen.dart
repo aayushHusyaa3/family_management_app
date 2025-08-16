@@ -154,11 +154,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             });
             if (uid != null && uid!.isNotEmpty) {
               Future.delayed(Duration(seconds: 3), () {
-                Navigator.pushReplacement(
+                Navigator.pushReplacementNamed(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => RoleSelectionScreen(uid: uid!),
-                  ),
+                  AppRoutes.roleSelectionScreen,
                 );
               });
             } else {

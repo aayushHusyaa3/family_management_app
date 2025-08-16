@@ -44,3 +44,22 @@ class FirebaseAuthErrorHandler {
     }
   }
 }
+
+class GoogleSignInErrorHandler {
+  static String getFriendlyErrorMessage(dynamic error) {
+    final errorStr = error.toString().toLowerCase();
+    if (errorStr.contains("canceled") || errorStr.contains("cancelled")) {
+      return "Sign-in cancelled by the user.";
+    } else if (errorStr.contains("network") || errorStr.contains("internet")) {
+      return "Please check your internet connection.";
+    } else if (errorStr.contains("account-exists")) {
+      return "An account already exists with this email.";
+    } else if (errorStr.contains("invalid-credential")) {
+      return "Invalid credentials, please try again.";
+    } else if (errorStr.contains("user-disabled")) {
+      return "This account has been disabled.";
+    } else {
+      return "Something went wrong, please try again.";
+    }
+  }
+}

@@ -27,10 +27,10 @@ class RoleUpdateCubit extends Cubit<RoleUpdateState> {
   }
 
   Future<void> updateChiefsRole({
-    required String uid,
     required String title,
     String? description,
   }) async {
+    final uid = firebaseAuth.currentUser?.uid;
     emit(state.copyWith(status: RoleUpdatingStatus.updating));
 
     try {
@@ -46,8 +46,9 @@ class RoleUpdateCubit extends Cubit<RoleUpdateState> {
 
       final savedBoardId = doc.data()?['boardId'];
       final savedTitle = doc.data()?['title'];
+      final savedRole = doc.data()?['role'];
       final savedDescription = doc.data()?['description'];
-      await SecureStorage.save(key: "role", data: "Chief");
+      await SecureStorage.save(key: "savedRole", data: savedRole);
       await SecureStorage.save(key: "boardId", data: savedBoardId);
 
       emit(

@@ -55,6 +55,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         "role": null,
         "joinStatus": null,
         "wasApprovedShown": false,
+        "wasLogin": false,
       });
 
       final doc = await FirebaseFirestore.instance

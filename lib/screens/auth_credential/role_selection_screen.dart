@@ -10,9 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
-  final String? uid;
-
-  const RoleSelectionScreen({super.key, this.uid});
+  const RoleSelectionScreen({super.key});
 
   @override
   State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
@@ -164,7 +162,6 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                                     context
                                         .read<RoleUpdateCubit>()
                                         .updateChiefsRole(
-                                          uid: widget.uid!,
                                           title: boardTitleController.text
                                               .trim(),
                                           description:

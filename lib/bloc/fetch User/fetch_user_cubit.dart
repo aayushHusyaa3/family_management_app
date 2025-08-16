@@ -236,7 +236,7 @@ class FetchUserCubit extends Cubit<FetchUserState> {
             "joinStatus": 'accepted',
           });
       await fetchJoinRequests();
-      await SecureStorage.save(key: "role", data: role);
+      await SecureStorage.save(key: "savedRole", data: role);
 
       final joinRequestDoc = await firestore
           .collection('board')

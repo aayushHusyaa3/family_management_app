@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     log(
       "NAME: $userName, ROLE: $userRole, IMAGE: $userImage, EMAIL: $useremail",
     );
+    log(savedUserRole!);
   }
 
   List<IconData> icons = [

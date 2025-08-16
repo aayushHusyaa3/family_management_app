@@ -1,4 +1,5 @@
 import 'package:family_management_app/app/routes/app_routes.dart';
+import 'package:family_management_app/screens/auth_credential/forget_password_screen.dart';
 import 'package:family_management_app/screens/auth_credential/join_status_screen.dart/acceptedstatus_screen.dart';
 import 'package:family_management_app/screens/auth_credential/join_status_screen.dart/rejectedstatus_screen.dart';
 import 'package:family_management_app/screens/auth_credential/login_screen.dart';
@@ -64,12 +65,12 @@ class AppRouter {
       return transtionTo(OnboardingScreen2());
     } else if (settings.name == AppRoutes.loginScreen) {
       return transtionTo(LoginScreen());
+    } else if (settings.name == AppRoutes.forgetPasswordScreen) {
+      return transtionTo(ForgetPasswordScreen());
     } else if (settings.name == AppRoutes.registerScreen) {
       return transtionTo(RegisterScreen());
     } else if (settings.name == AppRoutes.roleSelectionScreen) {
-      return transtionTo(
-        RoleSelectionScreen(uid: settings.arguments as String?),
-      );
+      return transtionTo(RoleSelectionScreen());
     } else if (settings.name == AppRoutes.navigationScreen) {
       return transtionTo(NavigationScreens());
     } else if (settings.name == AppRoutes.homeScreen) {

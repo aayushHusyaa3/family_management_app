@@ -62,6 +62,7 @@ class MyTextField extends StatelessWidget {
   final String? errorMsg;
   final VoidCallback onPasswordIconClicked;
   final ValueChanged<String>? onChangedValue;
+  final double bottomPadding;
 
   const MyTextField({
     super.key,
@@ -73,11 +74,12 @@ class MyTextField extends StatelessWidget {
     this.errorMsg,
     this.onChangedValue,
     required this.onPasswordIconClicked,
+    this.bottomPadding = 20,
   });
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 20.h),
+      padding: EdgeInsets.only(bottom: bottomPadding.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -163,9 +165,7 @@ class MyProfileHolder extends StatelessWidget {
         border: BoxBorder.all(width: 1, color: AppColor.secondary),
         image: hasImage
             ? DecorationImage(
-                image: imagePath != null
-                    ? NetworkImage(imagePath!)
-                    : AssetImage(AppImages.profilePlaceholder),
+                image: NetworkImage(imagePath!),
                 fit: BoxFit.cover,
               )
             : null,

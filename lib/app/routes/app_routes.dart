@@ -23,4 +23,5 @@ class AppRoutes {
   static const rejectedScreen = '/RejectedScreen';
   static const roleSelectionScreen = '/RoleSelectionScreen';
   static const notificationShowerScreen = '/NotificationShowerScreen';
+  static const forgetPasswordScreen = '/ForgetPasswordScreen';
 }

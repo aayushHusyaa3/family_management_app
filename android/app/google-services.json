@@ -12,7 +12,20 @@
           "package_name": "com.example.family_management_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1058182962921-08psp4uakh9rf63n184p21i8gjrju1v5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.family_management_app",
+            "certificate_hash": "ed63752a37b4ad32792912585acff4080856aacb"
+          }
+        },
+        {
+          "client_id": "1058182962921-kakmoicscdouu0pnqjk4bo28glkkohoq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBsEnOml7ctYgRNS_L6LMY5UWWa1IfasSE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058182962921-kakmoicscdouu0pnqjk4bo28glkkohoq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1058182962921-ghtvqp9ol28fdnro6i9hmlil1sf54gkf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.familyManagementApp"
+              }
+            }
+          ]
         }
       }
     }
